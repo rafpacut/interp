@@ -15,7 +15,7 @@ int main() {
             break;
 
         auto &parser = grammar::program;
-        ast::program program; // Our program (AST)
+        ast::program program; 
 	ast::printer print;
 
         It iter = str.begin(), end = str.end();

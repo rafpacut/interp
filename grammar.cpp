@@ -5,7 +5,6 @@ namespace x3 = boost::spirit::x3;
 
 namespace grammar 
 {
-	//Grammar(){
 		static auto name 
 			= x3::rule<class name_, std::string> {"name"}
 		= x3::alpha >> *x3::alnum;
@@ -31,6 +30,5 @@ namespace grammar
 	    static auto program 
 		= x3::rule<class program_, std::list<ast::statement> > {"program"}
 		= +(statement >> ';');
-//	}
 }
 

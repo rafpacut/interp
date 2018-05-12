@@ -26,12 +26,6 @@ namespace ast {
     struct program {
         std::list<statement> stmts;
     };
-
-    //std::ostream& operator<<(std::ostream& os, const statement& stmt)
-    //{
-    //        os<<"statement: name: "<<stmt.name<<" value: "<<stmt.value;
-    //        return os;
-    //}
 } 
 
 BOOST_FUSION_ADAPT_STRUCT(ast::Expr, 
