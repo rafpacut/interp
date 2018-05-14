@@ -1,6 +1,28 @@
 #include "ast.h"
 
 namespace ast {
+        struct operand : x3::variant<
+              unsigned int
+	      //, signed_
+              , x3::forward_ast<signed_>
+              , x3::forward_ast<Expr>
+            >
+        {
+            using base_type::base_type;
+            using base_type::operator=;
+        };
+
+        struct signed_
+        {
+            char sign;
+            operand operand_;
+        };
+
+        struct operation
+        {
+            char operator_;
+            operand operand_;
+        };
 
 	struct varDecl
 	{
@@ -10,7 +32,8 @@ namespace ast {
 
 	struct Expr
 	{
-		int val;
+		operand first; 
+		std::list<operation> rest;
 	};
 
 
@@ -28,8 +51,16 @@ namespace ast {
     };
 } 
 
+BOOST_FUSION_ADAPT_STRUCT(ast::signed_,
+    sign, operand_
+)
+
+BOOST_FUSION_ADAPT_STRUCT(ast::operation,
+    operator_, operand_
+)
+
 BOOST_FUSION_ADAPT_STRUCT(ast::Expr, 
-		(int,val)
+		first, rest
 		)
 
 BOOST_FUSION_ADAPT_STRUCT(ast::varDecl, 

@@ -7,6 +7,8 @@
 namespace x3 = boost::spirit::x3;
 
 namespace ast {
+	struct signed_;
+	struct operation;
 	struct varDecl;
 	struct Expr;
 	struct statement;
