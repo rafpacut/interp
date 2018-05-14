@@ -5,8 +5,6 @@ namespace ast
 {
     struct printer
     {
-        typedef void result_type;
-
         void operator()(unsigned int n) const { std::cout << n; }
 	void operator()(int n) const {std::cout<<n;}
 
@@ -34,18 +32,19 @@ namespace ast
 
 	void operator()(varDecl const& x) const
 	{
-		std::cout<<"Variable Declaration: name="<<x.name<<" value= "<<x.value<<'\n';
+		std::cout<<"Variable Declaration: name= "<<x.name<<" value= ";
+		//boost::apply_visitor(*this, x.value);
+		(*this)(x.value);
 	}
 
 	void operator()(Expr const& x) const
 	{
-		boost::apply_visitor(*this,x.first);
+		boost::apply_visitor(*this, x.first);
 		for(const operation& o : x.rest)
 		{
 			std::cout << ' ';
 			(*this)(o);
 		}
-		std::cout<<'\n';
 	}
 
 	void operator()(statement const& x) const

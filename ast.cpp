@@ -3,7 +3,6 @@
 namespace ast {
         struct operand : x3::variant<
               unsigned int
-	      //, signed_
               , x3::forward_ast<signed_>
               , x3::forward_ast<Expr>
             >
@@ -24,18 +23,17 @@ namespace ast {
             operand operand_;
         };
 
-	struct varDecl
-	{
-            std::string name;
-            int value;
-	};
-
 	struct Expr
 	{
 		operand first; 
 		std::list<operation> rest;
 	};
 
+	struct varDecl
+	{
+            std::string name;
+	    Expr value;
+	};
 
         struct statement : x3::variant<
 		varDecl,
@@ -64,8 +62,7 @@ BOOST_FUSION_ADAPT_STRUCT(ast::Expr,
 		)
 
 BOOST_FUSION_ADAPT_STRUCT(ast::varDecl, 
-		(std::string, name)
-         	,(int, value)
+		name, value
 		)
 
 BOOST_FUSION_ADAPT_STRUCT(ast::program, stmts)
