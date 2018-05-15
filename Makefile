@@ -1,4 +1,4 @@
-mine: ast.o astPrinter.o
+mine: ast.o astPrinter.o 
 	g++ -Wall -std=c++14 -I /opt/boost_1_66_0 ast.o astPrinter.o main.cpp -o parser.a
 
 ast.o:
@@ -10,3 +10,5 @@ astPrinter.o:
 clean:
 	rm *.o
 	 
+debug: ast.o astPrinter.o 
+	g++ -g -Wall -std=c++14 -I /opt/boost_1_66_0 ast.o astPrinter.o main.cpp -o parser.a

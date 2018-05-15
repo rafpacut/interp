@@ -3,6 +3,85 @@
 
 #include "ast.h"
 #include "astPrinter.cpp"
+//#include "eval.cpp"
+
+#include <map>
+///////////////////////////////////////////////////////////////////////////
+//  The AST evaluator
+///////////////////////////////////////////////////////////////////////////
+std::map<std::string, int> vars;
+namespace ast{
+
+    struct eval
+    {
+        typedef int result_type;
+
+
+        int operator()(unsigned int n) const { return n; }
+	
+	int operator()(int n) const { return n; }
+
+        int operator()(operation const& x, int lhs) const
+        {
+            int rhs = boost::apply_visitor(*this, x.operand_);
+            switch (x.operator_)
+            {
+                case '+': return lhs + rhs;
+                case '-': return lhs - rhs;
+                case '*': return lhs * rhs;
+                case '/': return lhs / rhs;
+            }
+            BOOST_ASSERT(0);
+            return 0;
+        }
+
+        int operator()(signed_ const& x) const
+        {
+            int rhs = boost::apply_visitor(*this, x.operand_);
+            switch (x.sign)
+            {
+                case '-': return -rhs;
+                case '+': return +rhs;
+            }
+            BOOST_ASSERT(0);
+            return 0;
+        }
+
+	int operator()(varDecl const& x) const
+	{
+		int value = (*this)(x.value);
+		vars.emplace(x.name, value);
+
+		return 0;
+	}
+
+	int operator()(Expr const& x) const
+	{
+		int value = boost::apply_visitor(*this, x.first);
+		for(const operation& o: x.rest)
+		{
+			value = (*this)(o, value);
+		}
+		return value;
+	}
+
+	int operator()(statement const& x) const
+	{
+		return boost::apply_visitor(*this, x);
+	}
+
+        int operator()(program const& x) const
+        {
+	    int state = 1;
+            for (statement const& stmt : x.stmts)
+            {
+                state = (*this)(stmt);
+            }
+            return state;
+        }
+    };
+}
+
 namespace grammar 
 {
 	using namespace x3;
@@ -80,11 +159,13 @@ int main() {
         auto &parser = grammar::program;
         ast::program program; 
 	ast::printer print;
+	ast::eval eval;
 
         It iter = str.begin(), end = str.end();
         if (phrase_parse(iter, end, parser, x3::space, program)) {
             std::cout << "Parsing succeeded\n";
 	    print(program);
+	    std::cout<<'\n'<<eval(program);
         }
         else
             std::cout << "Parsing failed\n";
