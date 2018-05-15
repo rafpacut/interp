@@ -1,5 +1,7 @@
 #include <iostream>
 #include "ast.cpp"
+#include <map>
+std::map<std::string, int> vars;
 
 namespace ast
 {
@@ -7,6 +9,11 @@ namespace ast
     {
         void operator()(unsigned int n) const { std::cout << n; }
 	void operator()(int n) const {std::cout<<n;}
+
+	void operator()(std::string s) const
+	{
+		std::cout<<"variable "<<s;
+	}
 
         void operator()(operation const& x) const
         {
@@ -33,7 +40,6 @@ namespace ast
 	void operator()(varDecl const& x) const
 	{
 		std::cout<<"Variable Declaration: name= "<<x.name<<" value= ";
-		//boost::apply_visitor(*this, x.value);
 		(*this)(x.value);
 	}
 
@@ -56,8 +62,9 @@ namespace ast
         {
             for (statement const& stmt : x.stmts)
             {
-                std::cout << ' ';
+                std::cout << "Statement: ";
                 (*this)(stmt);
+		std::cout<<'\n';
             }
         }
     };

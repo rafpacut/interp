@@ -9,7 +9,6 @@
 ///////////////////////////////////////////////////////////////////////////
 //  The AST evaluator
 ///////////////////////////////////////////////////////////////////////////
-std::map<std::string, int> vars;
 namespace ast{
 
     struct eval
@@ -20,6 +19,19 @@ namespace ast{
         int operator()(unsigned int n) const { return n; }
 	
 	int operator()(int n) const { return n; }
+
+	int operator()(std::string s) const
+	{
+		int val;
+		try{
+			val = vars.at(s);
+		}
+		catch(const std::out_of_range& e)
+		{
+			std::cout<<"Using undeclared variable "<<s;
+		}
+		return val;
+	}
 
         int operator()(operation const& x, int lhs) const
         {
@@ -105,12 +117,15 @@ namespace grammar
             term
             >> *(   (char_('+') > term)
                 |   (char_('-') > term)
+		|   (char_('+') > name)
+		|   (char_('-') > name)
                 )
             ;
  
         const auto factor_def 
         =
                 x3::uint_
+            |   name		
             |   ('(' > expression > ')')
             |   (char_('-') > factor)
             |   (char_('+') > factor)
@@ -165,7 +180,7 @@ int main() {
         if (phrase_parse(iter, end, parser, x3::space, program)) {
             std::cout << "Parsing succeeded\n";
 	    print(program);
-	    std::cout<<'\n'<<eval(program);
+	    std::cout<<'\n'<<eval(program)<<'\n';
         }
         else
             std::cout << "Parsing failed\n";

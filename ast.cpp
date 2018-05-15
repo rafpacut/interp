@@ -3,6 +3,7 @@
 namespace ast {
         struct operand : x3::variant<
               unsigned int
+	      , std::string //name of a variable
               , x3::forward_ast<signed_>
               , x3::forward_ast<Expr>
             >
