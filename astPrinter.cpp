@@ -1,21 +1,17 @@
-#include <iostream>
-#include "ast.cpp"
-#include <map>
-std::map<std::string, int> vars;
+#include "astPrinter.h"
+
 
 namespace ast
 {
-    struct printer
-    {
-        void operator()(unsigned int n) const { std::cout << n; }
-	void operator()(int n) const {std::cout<<n;}
+        void printer::operator()(unsigned int n) const { std::cout << n; }
+	void printer::operator()(int n) const {std::cout<<n;}
 
-	void operator()(std::string s) const
+	void printer::operator()(std::string s) const
 	{
 		std::cout<<"variable "<<s;
 	}
 
-        void operator()(operation const& x) const
+        void printer::operator()(operation const& x) const
         {
             boost::apply_visitor(*this, x.operand_);
             switch (x.operator_)
@@ -27,7 +23,7 @@ namespace ast
             }
         }
 
-        void operator()(signed_ const& x) const
+        void printer::operator()(signed_ const& x) const
         {
             boost::apply_visitor(*this, x.operand_);
             switch (x.sign)
@@ -37,28 +33,29 @@ namespace ast
             }
         }
 
-	void operator()(varDecl const& x) const
+	void printer::operator()(varDecl const& x) const
 	{
-		std::cout<<"Variable Declaration: name= "<<x.name<<" value= ";
+		std::cout<<"(Variable Declaration: name= "<<x.name<<" value= (";
 		(*this)(x.value);
+		std::cout<<')';
 	}
 
-	void operator()(Expr const& x) const
+	void printer::operator()(Expr const& x) const
 	{
 		boost::apply_visitor(*this, x.first);
 		for(const operation& o : x.rest)
 		{
-			std::cout << ' ';
+			std::cout<<' ';
 			(*this)(o);
 		}
 	}
 
-	void operator()(statement const& x) const
+	void printer::operator()(statement const& x) const
 	{
 		boost::apply_visitor(*this, x);
 	}
 
-        void operator()(program const& x) const
+        void printer::operator()(program const& x) const
         {
             for (statement const& stmt : x.stmts)
             {
@@ -67,5 +64,4 @@ namespace ast
 		std::cout<<'\n';
             }
         }
-    };
 }
