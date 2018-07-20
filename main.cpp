@@ -26,7 +26,6 @@ int main(int argc, char **argv) {
 	//read the file
 	   std::ifstream in(argv[1], std::ios::in | std::ios::binary);
 	   str = std::string((std::istreambuf_iterator<char>(in)), std::istreambuf_iterator<char>());
-	   std::cout<<str.length();
 
 	   //process
 	   It iter = str.begin(), end = str.end();
