@@ -1,5 +1,11 @@
+#ifndef EVAL_H_
+#define EVAL_H_
+
 #include <map>
+#include "ast.h"
 #include <iostream>
+#include <boost/optional.hpp>
+using boost::optional;
 
 namespace ast{
 	struct Eval
@@ -17,6 +23,8 @@ namespace ast{
 		int operator()(program const& x);
 
 		//Ofc that goes into evironment later on.
-		std::map<std::string, int> vars;
+		std::map<std::string, optional<int>> vars;
 	};
 }
+
+#endif

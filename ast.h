@@ -1,10 +1,16 @@
+#ifndef AST_H_
+#define AST_H_
+
+
 #include <list>
 #include <boost/spirit/home/x3/support/ast/variant.hpp>
 #include <boost/fusion/adapted.hpp>
 #include <boost/spirit/home/x3.hpp>
+#include <boost/optional.hpp>
 
 
 namespace x3 = boost::spirit::x3;
+using boost::optional;
 
 namespace ast {
 
@@ -42,8 +48,9 @@ namespace ast {
 
 	struct varDecl
 	{
+            std::string type;
             std::string name;
-	    Expr value;
+	    optional<Expr> value;
 	};
 
         struct statement : x3::variant<
@@ -55,9 +62,9 @@ namespace ast {
 		using base_type::operator=;
         };
 
-    struct program {
-        std::list<statement> stmts;
-    };
+	struct program {
+	    std::list<statement> stmts; 
+	};
 } 
 
 BOOST_FUSION_ADAPT_STRUCT(ast::signed_,
@@ -73,7 +80,9 @@ BOOST_FUSION_ADAPT_STRUCT(ast::Expr,
 		)
 
 BOOST_FUSION_ADAPT_STRUCT(ast::varDecl, 
-		name, value
+		type, name, value
 		)
 
 BOOST_FUSION_ADAPT_STRUCT(ast::program, stmts)
+
+#endif

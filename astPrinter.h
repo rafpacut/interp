@@ -3,11 +3,15 @@
 
 
 #include <iostream>
+#include <boost/optional.hpp>
 #include "ast.h"
 #include <map>
 
-//should be in eval...
-extern std::map<std::string, int> vars;
+
+using boost::optional;
+
+//should be in env...
+extern std::map<std::string, optional<int>> vars;
 namespace ast
 {
 	struct printer

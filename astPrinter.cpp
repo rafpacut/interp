@@ -36,7 +36,8 @@ namespace ast
 	void printer::operator()(varDecl const& x) const
 	{
 		std::cout<<"(Variable Declaration: name= "<<x.name<<" value= (";
-		(*this)(x.value);
+		if(x.value)
+			(*this)(*(x.value));
 		std::cout<<')';
 	}
 

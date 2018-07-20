@@ -8,13 +8,22 @@ namespace grammar
 	x3::rule<class statement_, ast::statement> const statement("statement");
 	x3::rule<class program_, std::list<ast::statement> > const program("program");
 	x3::rule<class name_, std::string> const name("name");
+	x3::rule<class type_, std::string> const type("type");
 	x3::rule<class varDecl_, ast::varDecl> const varDecl("varDecl");
+
+
+	const auto type_def
+	= string("int")
+	| string("float")
+	| string("string")
+	;
+
 
 	const auto name_def 
 	= x3::alpha >> *x3::alnum;
 
 	const auto varDecl_def
-	= name >> '=' >> expression;
+	= type >> name >> -('=' >> expression);
 
         const auto expression_def 
         =
@@ -60,6 +69,7 @@ namespace grammar
 	  , name
 	  , varDecl
 	  , statement
+	  , type
 	  , program
         );
 
