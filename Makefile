@@ -1,10 +1,10 @@
-mine: astPrinter.o eval.o
+mine: astPrinter eval
 	g++ -Wall -std=c++14 -I /opt/boost_1_66_0 eval.o astPrinter.o main.cpp -o interp.a
 
-astPrinter.o:
+astPrinter:
 	g++ -Wall -std=c++14 -I /opt/boost_1_66_0 -c astPrinter.cpp
 
-eval.o:
+eval:
 	g++ -Wall -std=c++14 -I /opt/boost_1_66_0 -c eval.cpp
 
 clean:
