@@ -1,14 +1,20 @@
+CXX = g++-7
+ROOT_BOOST = /opt/boost_1_66_0
+CXXFLAGS = -Wall -std=c++14 -I $(ROOT_BOOST)
+
+
+
 mine: astPrinter eval
-	g++ -Wall -std=c++14 -I /opt/boost_1_66_0 eval.o astPrinter.o main.cpp -o interp.a
+	$(CXX) $(CXXFLAGS) eval.o astPrinter.o main.cpp -o interp.a
 
 astPrinter:
-	g++ -Wall -std=c++14 -I /opt/boost_1_66_0 -c astPrinter.cpp
+	$(CXX) $(CXXFLAGS) -c astPrinter.cpp
 
 eval:
-	g++ -Wall -std=c++14 -I /opt/boost_1_66_0 -c eval.cpp
+	$(CXX) $(CXXFLAGS) -c eval.cpp
 
 clean:
 	rm *.o
 	 
 debug: astPrinter.o eval.o
-	g++ -g -Wall -std=c++14 -I /opt/boost_1_66_0 eval.o astPrinter.o main.cpp -o dinterp.a
+	$(CXX) $(CXXFLAGS) -g eval.o astPrinter.o main.cpp -o dinterp.a
