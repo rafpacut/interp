@@ -10,31 +10,17 @@ namespace ast{
 	int Eval::operator()(std::string s) const
 	{
 		optional<int> val;
-		try
+		val = vars.at(s);
+		if(!val)
 		{
-			val = vars.at(s);
-			if(!val)
-			{
-				std::cout<<"Using uninitialized variable " + s<<std::endl;
-				throw std::runtime_error("Using uninitialized variable " + s);
-			}
-		}
-		catch(const std::out_of_range& e)
-		{
-			std::cout<<"Using undeclared variable "<<s<<std::endl;
-			throw;
+			throw std::runtime_error("Using uninitialized variable " + s);
 		}
 		return *val;
 	}
 
         int Eval::operator()(operation const& x, int lhs) const
         {
-		int rhs;
-		try
-		{
-		    rhs = boost::apply_visitor(*this, x.operand_);
-		}
-		catch(...){throw;}
+	    int rhs = boost::apply_visitor(*this, x.operand_);
             switch (x.operator_)
             {
                 case '+': return lhs + rhs;
@@ -48,19 +34,14 @@ namespace ast{
 
         int Eval::operator()(signed_ const& x) const
         {
-		int rhs;
-		try
+		int rhs = boost::apply_visitor(*this, x.operand_);
+		switch (x.sign)
 		{
-		    rhs = boost::apply_visitor(*this, x.operand_);
+		    case '-': return -rhs;
+		    case '+': return +rhs;
 		}
-		catch(...){throw;}
-            switch (x.sign)
-            {
-                case '-': return -rhs;
-                case '+': return +rhs;
-            }
-            BOOST_ASSERT(0);
-            return 0;
+		BOOST_ASSERT(0);
+		return 0;
         }
 
 	int Eval::operator()(varDecl const& x)
@@ -76,19 +57,11 @@ namespace ast{
 	int Eval::operator()(Expr const& x) const
 	{
 		int value;
-		try
-		{
-			value = boost::apply_visitor(*this, x.first);
-		}
-		catch(...) { throw; }
+		value = boost::apply_visitor(*this, x.first);
 
 		for(const operation& o: x.rest)
 		{
-			try
-			{
-				value = (*this)(o, value);
-			}
-			catch(...){throw;}
+			value = (*this)(o, value);
 		}
 		return value;
 	}
@@ -96,11 +69,7 @@ namespace ast{
 	int Eval::operator()(statement const& x) 
 	{
 		int value = 0;
-		try
-		{
-			value = boost::apply_visitor(*this, x);
-		}
-		catch(...){throw;}
+		value = boost::apply_visitor(*this, x);
 		return value;
 	}
 
@@ -109,14 +78,7 @@ namespace ast{
 	    int state = 0;
             for (statement const& stmt : x.stmts)
             {
-		    try
-		    {
-			state = (*this)(stmt);
-		    }
-		    catch(...)
-		    {
-			    return 1;
-		    }
+		state = (*this)(stmt);
             }
             return state;
         }

@@ -33,7 +33,19 @@ int main(int argc, char **argv) {
 	   {
 		std::cout<< "Parsing succeded\n";
 		print(program);
-		std::cout<<'\n'<<eval(program)<<'\n';
+		try
+		{
+			std::cout<<'\n'<<eval(program)<<'\n';
+		}
+		catch(std::runtime_error& e)
+		{
+			std::cout<<e.what()<<std::endl;
+			return 1;
+		}
+		catch(...)
+		{
+			return 1;
+		}
 
 		if (iter != end)
 			std::cout << "Remaining unparsed: " << std::quoted(std::string(iter, end), '\'') << "\n";
@@ -44,7 +56,6 @@ int main(int argc, char **argv) {
     }
     else
     {
-
 	    std::cout << "Type an expression...or [q or Q] to quit\n\n";
 
 
@@ -56,7 +67,16 @@ int main(int argc, char **argv) {
 		if (phrase_parse(iter, end, parser, x3::space, program)) {
 		    std::cout << "Parsing succeeded\n";
 		    print(program);
-		    std::cout<<'\n'<<eval(program)<<'\n';
+
+		    try
+		    {
+			    std::cout<<'\n'<<eval(program)<<'\n';
+		    }
+		    catch(std::runtime_error& e)
+		    {
+			    std::cout<<e.what()<<std::endl;
+		    }
+		    catch(...){}//do nothing. Rn all throwable exceptions allow processing of the next query.
 		}
 		else
 		    std::cout << "Parsing failed\n";
