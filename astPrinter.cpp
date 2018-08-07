@@ -33,6 +33,11 @@ namespace ast
             }
         }
 
+	void printer::operator()(print const& x) const
+	{
+		std::cout<<"Print "<<x.name<<std::endl;
+	}
+
 	void printer::operator()(varDecl const& x) const
 	{
 		std::cout<<"(Variable Declaration: name= "<<x.name<<" value= (";

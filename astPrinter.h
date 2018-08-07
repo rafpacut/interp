@@ -23,6 +23,7 @@ namespace ast
 		void operator()(signed_ const&) const;
 		void operator()(varDecl const&) const;
 		void operator()(assignment const&) const;
+		void operator()(print const&) const;
 		void operator()(Expr const&) const;
 		void operator()(statement const&) const;
 		void operator()(program const&) const;

@@ -44,6 +44,17 @@ namespace ast{
 		return 0;
         }
 
+	int Eval::operator()(print const& x) const
+	{
+		optional<int> val = vars.at(x.name);
+		if(val)
+			std::cout<<*val<<std::endl;
+		else
+			std::cout<<x.name<<" was not yet initialized."<<std::endl;
+
+		return 0;
+	}
+
 	int Eval::operator()(varDecl const& x)
 	{
 		optional<int> value = boost::none;
@@ -77,13 +88,13 @@ namespace ast{
 	int Eval::operator()(whileLoop const& x)
 	{
 		int state=0;
-		//while((*this)(x.condition))
-		//{
-		////	for(statement const& stmt : x.body)
-		////	{
-		////		state = (*this)(stmt);
-		////	}
-		//}
+		while((*this)(x.condition))
+		{
+			for(statement const& stmt : x.body)
+			{
+				state = (*this)(stmt);
+			}
+		}
 		return state;
 	}
 

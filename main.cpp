@@ -42,6 +42,10 @@ int main(int argc, char **argv) {
 			std::cout<<e.what()<<std::endl;
 			return 1;
 		}
+		catch(std::out_of_range& e)
+		{
+			std::cout<<"Using undeclared variable"<<std::endl;
+		}
 		catch(...)
 		{
 			return 1;
