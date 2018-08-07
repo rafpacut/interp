@@ -51,6 +51,18 @@ namespace ast
 		}
 	}
 
+	void printer::operator()(whileLoop const& x) const
+	{
+		std::cout<<"While loop (";
+		(*this)(x.condition);
+		std::cout<<")\n{\n";
+		for(statement const& stmt : x.body)
+		{
+			(*this)(stmt);
+		}
+		std::cout<<"\n}\n";
+	}
+
 	void printer::operator()(statement const& x) const
 	{
 		boost::apply_visitor(*this, x);

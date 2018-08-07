@@ -66,6 +66,19 @@ namespace ast{
 		return value;
 	}
 
+	int Eval::operator()(whileLoop const& x)
+	{
+		int state=0;
+		//while((*this)(x.condition))
+		//{
+		////	for(statement const& stmt : x.body)
+		////	{
+		////		state = (*this)(stmt);
+		////	}
+		//}
+		return state;
+	}
+
 	int Eval::operator()(statement const& x) 
 	{
 		int value = 0;

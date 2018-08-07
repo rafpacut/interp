@@ -10,6 +10,8 @@ namespace grammar
 	x3::rule<class name_, std::string> const name("name");
 	x3::rule<class type_, std::string> const type("type");
 	x3::rule<class varDecl_, ast::varDecl> const varDecl("varDecl");
+	x3::rule<class whileLoop_, ast::whileLoop> const whileLoop("whileLoop");
+	x3::rule<class codeBlock_, std::list<ast::statement> > const codeBlock("codeBlock");
 
 
 	const auto type_def
@@ -20,7 +22,7 @@ namespace grammar
 
 
 	const auto name_def 
-	= x3::alpha >> *x3::alnum;
+	= (x3::alpha >> *x3::alnum) - x3::lit("while");
 
 	const auto varDecl_def
 	= type >> name >> -('=' >> expression);
@@ -51,15 +53,31 @@ namespace grammar
                 |   (char_('/') > factor)
                 )
             ;
+
+	const auto codeBlock_def
+	= 
+	    '{'
+	    >> +statement
+	    >> '}'
+	    ;
+
+	const auto whileLoop_def
+	= 
+	    x3::lit("while") 
+	    >> '(' >> expression >> ')'
+	    >> codeBlock
+	    ;
  
 	const auto statement_def 
 	= 
-	    varDecl
-	    | expression
+	    (varDecl >> ';')
+	    | (expression >> ';')
+	    | whileLoop
 	    ;
 
 	const auto program_def 
-	= +(statement >> ';');
+	= +statement
+	;
 
 
         BOOST_SPIRIT_DEFINE(
@@ -68,6 +86,8 @@ namespace grammar
           , factor
 	  , name
 	  , varDecl
+	  , codeBlock
+	  , whileLoop
 	  , statement
 	  , type
 	  , program
