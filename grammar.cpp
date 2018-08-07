@@ -10,6 +10,7 @@ namespace grammar
 	x3::rule<class name_, std::string> const name("name");
 	x3::rule<class type_, std::string> const type("type");
 	x3::rule<class varDecl_, ast::varDecl> const varDecl("varDecl");
+	x3::rule<class assignment_, ast::assignment> const assignment("assignment");
 	x3::rule<class whileLoop_, ast::whileLoop> const whileLoop("whileLoop");
 	x3::rule<class codeBlock_, std::list<ast::statement> > const codeBlock("codeBlock");
 
@@ -26,6 +27,9 @@ namespace grammar
 
 	const auto varDecl_def
 	= type >> name >> -('=' >> expression);
+
+	const auto assignment_def
+	= name >> '=' >> expression;
 
         const auto expression_def 
         =
@@ -71,6 +75,7 @@ namespace grammar
 	const auto statement_def 
 	= 
 	    (varDecl >> ';')
+	    | (assignment >> ';')
 	    | (expression >> ';')
 	    | whileLoop
 	    ;
@@ -86,6 +91,7 @@ namespace grammar
           , factor
 	  , name
 	  , varDecl
+	  , assignment
 	  , codeBlock
 	  , whileLoop
 	  , statement

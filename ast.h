@@ -47,6 +47,12 @@ namespace ast {
 		std::list<operation> rest;
 	};
 
+	struct assignment
+	{
+		std::string name;
+		Expr value;
+	};
+
 	struct varDecl
 	{
             std::string type;
@@ -56,6 +62,7 @@ namespace ast {
 
         struct statement : x3::variant<
 		varDecl,
+		assignment,
 		x3::forward_ast<whileLoop>,
 		Expr	
 	>
@@ -95,6 +102,11 @@ BOOST_FUSION_ADAPT_STRUCT(ast::Expr,
 BOOST_FUSION_ADAPT_STRUCT(ast::varDecl, 
 		type, name, value
 		)
+
+BOOST_FUSION_ADAPT_STRUCT(ast::assignment, 
+		name, value
+		)
+
 
 BOOST_FUSION_ADAPT_STRUCT(ast::program, stmts)
 

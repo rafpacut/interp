@@ -54,6 +54,14 @@ namespace ast{
 		return 0;
 	}
 
+	int Eval::operator()(assignment const& x)
+	{
+		int value = (*this)(x.value);
+		vars.at(x.name) = value;	
+
+		return 0;
+	}
+
 	int Eval::operator()(Expr const& x) const
 	{
 		int value;

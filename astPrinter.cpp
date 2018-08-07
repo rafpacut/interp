@@ -41,6 +41,13 @@ namespace ast
 		std::cout<<')';
 	}
 
+	void printer::operator()(assignment const& x) const
+	{
+		std::cout<<"Assigning value(";
+		(*this)(x.value);
+		std::cout<<") to "<<x.name<<std::endl;
+	}
+
 	void printer::operator()(Expr const& x) const
 	{
 		boost::apply_visitor(*this, x.first);
