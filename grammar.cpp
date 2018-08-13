@@ -14,6 +14,7 @@ namespace grammar
 	x3::rule<class assignment_, ast::assignment> const assignment("assignment");
 	x3::rule<class whileLoop_, ast::whileLoop> const whileLoop("whileLoop");
 	x3::rule<class codeBlock_, std::list<ast::statement> > const codeBlock("codeBlock");
+	x3::rule<class conditional, ast::conditional > const conditional("conditional");
 
 
 	const auto type_def
@@ -24,7 +25,7 @@ namespace grammar
 
 
 	const auto name_def 
-	= (x3::alpha >> *x3::alnum) - x3::lit("while");
+	= (x3::alpha >> *x3::alnum); 
 
 	const auto varDecl_def
 	= type >> name >> -('=' >> expression);
@@ -33,9 +34,16 @@ namespace grammar
 	= name >> '=' >> expression;
 
 	const auto print_def
-	=     x3::lit("print(") 
-	    >> name >> x3::lit(")");
+	=   x3::lit("print(") 
+	    >> name 
+	    >> x3::lit(")")
+	;
 
+	const auto conditional_def
+	= x3::lit("if(") >> expression >> ')'
+	  >> codeBlock
+	  >> -(x3::lit("else") >> codeBlock)
+	 ;
 
         const auto expression_def 
         =
@@ -80,10 +88,11 @@ namespace grammar
  
 	const auto statement_def 
 	= 
-	    (varDecl >> ';')
+	    whileLoop
+	    | conditional
+	    | (varDecl >> ';')
 	    | (assignment >> ';')
 	    | (expression >> ';')
-	    | whileLoop
 	    | (print >> ';')
 	    ;
 
@@ -102,6 +111,7 @@ namespace grammar
 	  , assignment
 	  , codeBlock
 	  , whileLoop
+	  , conditional
 	  , statement
 	  , type
 	  , program

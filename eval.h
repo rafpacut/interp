@@ -24,6 +24,7 @@ namespace ast{
 		int operator()(statement const& x);
 		int operator()(program const& x);
 		int operator()(whileLoop const& x);
+		int operator()(conditional const& x);
 
 		//Ofc that goes into evironment later on.
 		std::map<std::string, optional<int>> vars;

@@ -17,6 +17,7 @@ namespace ast {
 	struct signed_;
 	struct Expr;
 	struct whileLoop;
+	struct conditional;
 
         struct operand : x3::variant<
               unsigned int
@@ -70,12 +71,20 @@ namespace ast {
 		print,
 		assignment,
 		x3::forward_ast<whileLoop>,
+		x3::forward_ast<conditional>,
 		Expr	
 	>
 	{
 		using base_type::base_type;
 		using base_type::operator=;
         };
+
+	struct conditional
+	{
+		Expr condition;
+		std::list<statement> tBody;
+		optional<std::list<statement>> fBody;
+	};
 
 	struct whileLoop
 	{
@@ -107,6 +116,10 @@ BOOST_FUSION_ADAPT_STRUCT(ast::Expr,
 
 BOOST_FUSION_ADAPT_STRUCT(ast::varDecl, 
 		type, name, value
+		)
+
+BOOST_FUSION_ADAPT_STRUCT(ast::conditional, 
+		condition, tBody, fBody
 		)
 
 BOOST_FUSION_ADAPT_STRUCT(ast::assignment, 

@@ -65,6 +65,25 @@ namespace ast{
 		return 0;
 	}
 
+	int Eval::operator()(conditional const& x)
+	{
+		if((*this)(x.condition))
+		{
+			for(statement const& stmt: x.tBody)
+			{
+				(*this)(stmt);
+			}
+		}
+		else if(x.fBody)
+		{
+			for(statement const& stmt: (*x.fBody))
+			{
+				(*this)(stmt);
+			}
+		}
+		return 0;
+	}
+
 	int Eval::operator()(assignment const& x)
 	{
 		int value = (*this)(x.value);

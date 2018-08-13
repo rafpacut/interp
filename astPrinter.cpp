@@ -46,6 +46,26 @@ namespace ast
 		std::cout<<')';
 	}
 
+	void printer::operator()(conditional const& x) const
+	{
+		std::cout<<"IF ";
+		(*this)(x.condition);
+		std::cout<<std::endl;
+		for(statement const& stmt : x.tBody)
+		{
+			(*this)(stmt);
+		}
+
+		if(x.fBody)
+		{
+			std::cout<<"\n ELSE \n";
+			for(statement const& stmt : (*x.fBody))
+			{
+				(*this)(stmt);
+			}
+		}
+	}
+
 	void printer::operator()(assignment const& x) const
 	{
 		std::cout<<"Assigning value(";

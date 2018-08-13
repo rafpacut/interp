@@ -28,6 +28,7 @@ namespace ast
 		void operator()(statement const&) const;
 		void operator()(program const&) const;
 		void operator()(whileLoop const&) const;
+		void operator()(conditional const&) const;
 	};
 }
 
