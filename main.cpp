@@ -29,7 +29,7 @@ int main(int argc, char **argv) {
 
 	   //process
 	   It iter = str.begin(), end = str.end();
-	   if(phrase_parse(iter, end, parser, x3::space, program))
+	   if(phrase_parse(iter, end, parser, (x3::space| x3::eol), program))
 	   {
 		std::cout<< "Parsing succeded\n";
 		print(program);
