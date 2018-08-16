@@ -19,7 +19,7 @@ int Environment::getValue(const& std::string name, optional<int> idx = boost::no
 }
 
 template<typename T>
-void assignValue(const& std::string name, const T& value, const optional<int> idx = boost::none)
+void Environment::assignValue(const& std::string name, const T& value, const optional<int> idx = boost::none)
 {
 	auto res = std::find_if(scopes.crbegin(), scopes.crend(),
 			[](const& Scope s){ return s.hasVariable(name);}
@@ -46,7 +46,7 @@ void Scope::assignValue(std::string name, const int& value, const optional<int> 
 int Scope::getValue(const& std::string name, const optional<int> idx) const
 {
 	if(idx)
-		return *intVecs.find(name);
+		return *intVecs.find(name).at(idx);
 	else
 		return *ints.find(name);
 }
