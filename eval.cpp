@@ -9,16 +9,10 @@ namespace ast{
 
 	int Eval::operator()(std::string s) const
 	{
-		optional<int> val;
-		val = vars.at(s);
-		if(!val)
-		{
-			throw std::runtime_error("Using uninitialized variable " + s);
-		}
-		return *val;
+		return env.getValue(s);
 	}
 
-        int Eval::operator()(operation const& x, int lhs) const
+        int Eval::operator()(Operation const& x, int lhs) const
         {
 	    int rhs = boost::apply_visitor(*this, x.operand_);
             switch (x.operator_)
@@ -32,7 +26,7 @@ namespace ast{
             return 0;
         }
 
-        int Eval::operator()(signed_ const& x) const
+        int Eval::operator()(Signed_ const& x) const
         {
 		int rhs = boost::apply_visitor(*this, x.operand_);
 		switch (x.sign)
@@ -44,7 +38,7 @@ namespace ast{
 		return 0;
         }
 
-	int Eval::operator()(print const& x) const
+	int Eval::operator()(Print const& x) const
 	{
 		optional<int> val = vars.at(x.name);
 		if(val)
@@ -55,17 +49,17 @@ namespace ast{
 		return 0;
 	}
 
-	int Eval::operator()(varDecl const& x)
+	int Eval::operator()(VarDecl const& x)
 	{
 		optional<int> value = boost::none;
 		if(x.value)
 			value = (*this)(*(x.value));
-		vars.emplace(x.name, value);
+		env.declare(x.name, value);
 
 		return 0;
 	}
 
-	int Eval::operator()(conditional const& x)
+	int Eval::operator()(Conditional const& x)
 	{
 		if((*this)(x.condition))
 		{
@@ -84,10 +78,10 @@ namespace ast{
 		return 0;
 	}
 
-	int Eval::operator()(assignment const& x)
+	int Eval::operator()(Assignment const& x)
 	{
 		int value = (*this)(x.value);
-		vars.at(x.name) = value;	
+		env.assignValue(x.name, value);
 
 		return 0;
 	}
@@ -104,7 +98,7 @@ namespace ast{
 		return value;
 	}
 
-	int Eval::operator()(whileLoop const& x)
+	int Eval::operator()(WhileLoop const& x)
 	{
 		int state=0;
 		while((*this)(x.condition))
@@ -117,14 +111,14 @@ namespace ast{
 		return state;
 	}
 
-	int Eval::operator()(statement const& x) 
+	int Eval::operator()(Statement const& x) 
 	{
 		int value = 0;
 		value = boost::apply_visitor(*this, x);
 		return value;
 	}
 
-        int Eval::operator()(program const& x) 
+        int Eval::operator()(Program const& x) 
         {
 	    int state = 0;
             for (statement const& stmt : x.stmts)

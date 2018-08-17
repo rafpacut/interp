@@ -11,7 +11,7 @@ namespace ast
 		std::cout<<"variable "<<s;
 	}
 
-        void printer::operator()(operation const& x) const
+        void printer::operator()(Operation const& x) const
         {
             boost::apply_visitor(*this, x.operand_);
             switch (x.operator_)
@@ -23,7 +23,7 @@ namespace ast
             }
         }
 
-        void printer::operator()(signed_ const& x) const
+        void printer::operator()(Signed_ const& x) const
         {
             boost::apply_visitor(*this, x.operand_);
             switch (x.sign)
@@ -33,12 +33,12 @@ namespace ast
             }
         }
 
-	void printer::operator()(print const& x) const
+	void printer::operator()(Print const& x) const
 	{
 		std::cout<<"Print "<<x.name<<std::endl;
 	}
 
-	void printer::operator()(varDecl const& x) const
+	void printer::operator()(VarDecl const& x) const
 	{
 		std::cout<<"(Variable Declaration: name= "<<x.name<<" value= (";
 		if(x.value)
@@ -46,7 +46,7 @@ namespace ast
 		std::cout<<')';
 	}
 
-	void printer::operator()(conditional const& x) const
+	void printer::operator()(Conditional const& x) const
 	{
 		std::cout<<"IF ";
 		(*this)(x.condition);
@@ -66,7 +66,7 @@ namespace ast
 		}
 	}
 
-	void printer::operator()(assignment const& x) const
+	void printer::operator()(Assignment const& x) const
 	{
 		std::cout<<"Assigning value(";
 		(*this)(x.value);
@@ -83,7 +83,7 @@ namespace ast
 		}
 	}
 
-	void printer::operator()(whileLoop const& x) const
+	void printer::operator()(WhileLoop const& x) const
 	{
 		std::cout<<"While loop (";
 		(*this)(x.condition);
@@ -95,12 +95,12 @@ namespace ast
 		std::cout<<"\n}\n";
 	}
 
-	void printer::operator()(statement const& x) const
+	void printer::operator()(Statement const& x) const
 	{
 		boost::apply_visitor(*this, x);
 	}
 
-        void printer::operator()(program const& x) const
+        void printer::operator()(Program const& x) const
         {
             for (statement const& stmt : x.stmts)
             {

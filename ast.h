@@ -14,15 +14,15 @@ using boost::optional;
 
 namespace ast {
 
-	struct signed_;
+	struct Signed_;
 	struct Expr;
-	struct whileLoop;
-	struct conditional;
+	struct WhileLoop;
+	struct Conditional;
 
-        struct operand : x3::variant<
+        struct Operand : x3::variant<
               unsigned int
 	      , std::string //name of a variable
-              , x3::forward_ast<signed_>
+              , x3::forward_ast<Signed_>
               , x3::forward_ast<Expr>
             >
         {
@@ -30,48 +30,48 @@ namespace ast {
             using base_type::operator=;
         };
 
-        struct signed_
+        struct Signed_
         {
             char sign;
-            operand operand_;
+            Operand operand_;
         };
 
-        struct operation
+        struct Operation
         {
             char operator_;
-            operand operand_;
+            Operand operand_;
         };
 
 	struct Expr
 	{
-		operand first; 
-		std::list<operation> rest;
+		Operand first; 
+		std::list<Operation> rest;
 	};
 
-	struct assignment
+	struct Assignment
 	{
 		std::string name;
 		Expr value;
 	};
 
-	struct print 
+	struct Print 
 	{
 		std::string name;
 	};
 
-	struct varDecl
+	struct VarDecl
 	{
             std::string type;
             std::string name;
 	    optional<Expr> value;
 	};
 
-        struct statement : x3::variant<
-		varDecl,
-		print,
-		assignment,
-		x3::forward_ast<whileLoop>,
-		x3::forward_ast<conditional>,
+        struct Statement : x3::variant<
+		VarDecl,
+		Print,
+		Assignment,
+		x3::forward_ast<WhileLoop>,
+		x3::forward_ast<Conditional>,
 		Expr	
 	>
 	{
@@ -79,34 +79,34 @@ namespace ast {
 		using base_type::operator=;
         };
 
-	struct conditional
+	struct Conditional
 	{
 		Expr condition;
-		std::list<statement> tBody;
-		optional<std::list<statement>> fBody;
+		std::list<Statement> tBody;
+		optional<std::list<Statement>> fBody;
 	};
 
-	struct whileLoop
+	struct WhileLoop
 	{
 		Expr condition;
-		std::list<statement> body;
+		std::list<Statement> body;
 	};
 
-	struct program {
-	    std::list<statement> stmts; 
+	struct Program {
+	    std::list<Statement> stmts; 
 	};
 
 } 
 
-BOOST_FUSION_ADAPT_STRUCT(ast::signed_,
+BOOST_FUSION_ADAPT_STRUCT(ast::Signed_,
     sign, operand_
 )
 
-BOOST_FUSION_ADAPT_STRUCT(ast::whileLoop,
+BOOST_FUSION_ADAPT_STRUCT(ast::WhileLoop,
 		condition, body
 		)
 
-BOOST_FUSION_ADAPT_STRUCT(ast::operation,
+BOOST_FUSION_ADAPT_STRUCT(ast::Operation,
     operator_, operand_
 )
 
@@ -114,21 +114,21 @@ BOOST_FUSION_ADAPT_STRUCT(ast::Expr,
 		first, rest
 		)
 
-BOOST_FUSION_ADAPT_STRUCT(ast::varDecl, 
+BOOST_FUSION_ADAPT_STRUCT(ast::VarDecl, 
 		type, name, value
 		)
 
-BOOST_FUSION_ADAPT_STRUCT(ast::conditional, 
+BOOST_FUSION_ADAPT_STRUCT(ast::Conditional, 
 		condition, tBody, fBody
 		)
 
-BOOST_FUSION_ADAPT_STRUCT(ast::assignment, 
+BOOST_FUSION_ADAPT_STRUCT(ast::Assignment, 
 		name, value
 		)
 
-BOOST_FUSION_ADAPT_STRUCT(ast::print, name)
+BOOST_FUSION_ADAPT_STRUCT(ast::Print, name)
 
 
-BOOST_FUSION_ADAPT_STRUCT(ast::program, stmts)
+BOOST_FUSION_ADAPT_STRUCT(ast::Program, stmts)
 
 #endif

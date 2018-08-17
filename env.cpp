@@ -28,6 +28,18 @@ void Environment::assignValue(const& std::string name, const T& value, const opt
 	res->assignValue(name, value, idx);
 }
 
+void Environment::createScope()
+{
+	scopes.push_back(Scope()); 
+}
+
+void Environment::deleteScope()
+{
+	if(scopes.empty())
+		throw std::runtime_error("Global scope cannot be deleted.");
+	scopes.pop_back();
+}
+
 void Scope::assignValue(std::string name, const int& value, const optional<int> idx)
 {
 	if(idx)
@@ -40,15 +52,27 @@ void Scope::assignValue(std::string name, const int& value, const optional<int> 
 	}
 	else
 		ints.at(name) = value;
-
 }
 
 int Scope::getValue(const& std::string name, const optional<int> idx) const
 {
+	//Thats not dry nor pretty.
 	if(idx)
-		return *intVecs.find(name).at(idx);
+	{
+		auto resPtr = intVecs.find(name);
+		if(resPtr != intVecs.end() && resPtr->at(idx))
+			return resPtr->at(idx);
+		else
+			throw std::runtime_error("Using unitnitialized variable: "+name);
+	}
 	else
-		return *ints.find(name);
+	{
+		auto resPtr = ints.find(name);
+		if(resPtr != ints.end() && *val)
+			return *val;
+		else
+			throw std::runtime_error("Using unitnitialized variable: "+name);
+	}
 }
 
 template<typename T>

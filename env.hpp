@@ -11,7 +11,6 @@ struct Scope
 {
 	using boost::optional;
 
-
 	template<typename T>
 	void declare(const& std::string, const optional<T>);
 
@@ -35,6 +34,7 @@ struct Scope
 
 struct Environment
 {
+
 	using boost::optional;
 
 	template<typename T>
@@ -43,6 +43,9 @@ struct Environment
 
 	template<typename T>
 	void assignValue(const& std::string, const T& value, optional<int> id = boost::none);
+
+	void createScope();
+	void deleteScope();
 
 
 	std::list<Scope> scopes;

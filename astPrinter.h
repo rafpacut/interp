@@ -5,30 +5,28 @@
 #include <iostream>
 #include <boost/optional.hpp>
 #include "ast.h"
-#include <map>
 
 
-using boost::optional;
 
-//should be in env...
-extern std::map<std::string, optional<int>> vars;
 namespace ast
 {
 	struct printer
 	{
+		using boost::optional;
+
 		void operator()(unsigned int) const;
 		void operator()(int) const;
 		void operator()(std::string) const;
-		void operator()(operation const&) const;
-		void operator()(signed_ const&) const;
-		void operator()(varDecl const&) const;
-		void operator()(assignment const&) const;
-		void operator()(print const&) const;
+		void operator()(Operation const&) const;
+		void operator()(Signed_ const&) const;
+		void operator()(VarDecl const&) const;
+		void operator()(Assignment const&) const;
+		void operator()(Print const&) const;
 		void operator()(Expr const&) const;
-		void operator()(statement const&) const;
-		void operator()(program const&) const;
-		void operator()(whileLoop const&) const;
-		void operator()(conditional const&) const;
+		void operator()(Statement const&) const;
+		void operator()(Program const&) const;
+		void operator()(WhileLoop const&) const;
+		void operator()(Conditional const&) const;
 	};
 }
 
