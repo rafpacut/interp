@@ -9,7 +9,6 @@
 
 struct Scope
 {
-	using boost::optional;
 
 	template<typename T>
 	void declare(const& std::string, const optional<T>);
@@ -35,7 +34,6 @@ struct Scope
 struct Environment
 {
 
-	using boost::optional;
 
 	template<typename T>
 	void declare(const& std::string, const optional<T>);

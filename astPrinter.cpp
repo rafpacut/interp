@@ -51,7 +51,7 @@ namespace ast
 		std::cout<<"IF ";
 		(*this)(x.condition);
 		std::cout<<std::endl;
-		for(statement const& stmt : x.tBody)
+		for(Statement const& stmt : x.tBody)
 		{
 			(*this)(stmt);
 		}
@@ -59,7 +59,7 @@ namespace ast
 		if(x.fBody)
 		{
 			std::cout<<"\n ELSE \n";
-			for(statement const& stmt : (*x.fBody))
+			for(Statement const& stmt : (*x.fBody))
 			{
 				(*this)(stmt);
 			}
@@ -76,7 +76,7 @@ namespace ast
 	void printer::operator()(Expr const& x) const
 	{
 		boost::apply_visitor(*this, x.first);
-		for(const operation& o : x.rest)
+		for(const Operation& o : x.rest)
 		{
 			std::cout<<' ';
 			(*this)(o);
@@ -88,7 +88,7 @@ namespace ast
 		std::cout<<"While loop (";
 		(*this)(x.condition);
 		std::cout<<")\n{\n";
-		for(statement const& stmt : x.body)
+		for(Statement const& stmt : x.body)
 		{
 			(*this)(stmt);
 		}
@@ -102,7 +102,7 @@ namespace ast
 
         void printer::operator()(Program const& x) const
         {
-            for (statement const& stmt : x.stmts)
+            for (Statement const& stmt : x.stmts)
             {
                 std::cout << "Statement: ";
                 (*this)(stmt);

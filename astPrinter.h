@@ -6,14 +6,12 @@
 #include <boost/optional.hpp>
 #include "ast.h"
 
-
-
 namespace ast
 {
+	using boost::optional;
+
 	struct printer
 	{
-		using boost::optional;
-
 		void operator()(unsigned int) const;
 		void operator()(int) const;
 		void operator()(std::string) const;

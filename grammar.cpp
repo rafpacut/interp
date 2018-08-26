@@ -4,17 +4,17 @@ namespace grammar
 
         x3::rule<class expression_, ast::Expr> const expression("expression");
         x3::rule<class term_, ast::Expr> const term("term");
-        x3::rule<class factor_, ast::operand> const factor("factor");
-	x3::rule<class statement_, ast::statement> const statement("statement");
-	x3::rule<class program_, std::list<ast::statement> > const program("program");
+        x3::rule<class factor_, ast::Operand> const factor("factor");
+	x3::rule<class statement_, ast::Statement> const statement("statement");
+	x3::rule<class program_, std::list<ast::Statement> > const program("program");
 	x3::rule<class name_, std::string> const name("name");
-	x3::rule<class print_, ast::print> const print("print");
+	x3::rule<class print_, ast::Print> const print("print");
 	x3::rule<class type_, std::string> const type("type");
-	x3::rule<class varDecl_, ast::varDecl> const varDecl("varDecl");
-	x3::rule<class assignment_, ast::assignment> const assignment("assignment");
-	x3::rule<class whileLoop_, ast::whileLoop> const whileLoop("whileLoop");
-	x3::rule<class codeBlock_, std::list<ast::statement> > const codeBlock("codeBlock");
-	x3::rule<class conditional, ast::conditional > const conditional("conditional");
+	x3::rule<class varDecl_, ast::VarDecl> const varDecl("varDecl");
+	x3::rule<class assignment_, ast::Assignment> const assignment("assignment");
+	x3::rule<class whileLoop_, ast::WhileLoop> const whileLoop("whileLoop");
+	x3::rule<class codeBlock_, std::list<ast::Statement> > const codeBlock("codeBlock");
+	x3::rule<class conditional, ast::Conditional > const conditional("conditional");
 
 
 	const auto type_def

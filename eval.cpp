@@ -59,22 +59,23 @@ namespace ast{
 		return 0;
 	}
 
+	int Eval::operator()(std::list<Statement> body)
+	{
+		int state = 0;
+		for(Statement const& stmt: body)
+		{
+			state += (*this)(stmt);
+		}
+		return state;
+	}
+
 	int Eval::operator()(Conditional const& x)
 	{
 		if((*this)(x.condition))
-		{
-			for(statement const& stmt: x.tBody)
-			{
-				(*this)(stmt);
-			}
-		}
+			(*this)(x.tBody);
 		else if(x.fBody)
-		{
-			for(statement const& stmt: (*x.fBody))
-			{
-				(*this)(stmt);
-			}
-		}
+			(*this)(x.fBody);
+
 		return 0;
 	}
 
@@ -103,10 +104,7 @@ namespace ast{
 		int state=0;
 		while((*this)(x.condition))
 		{
-			for(statement const& stmt : x.body)
-			{
-				state = (*this)(stmt);
-			}
+			state = (*this)(x.body);
 		}
 		return state;
 	}

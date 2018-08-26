@@ -3,31 +3,31 @@
 
 #include <map>
 #include "ast.h"
+#include "env.hpp"
 #include <iostream>
 #include <boost/optional.hpp>
-using boost::optional;
 
 namespace ast{
+
+	using boost::optional;
+
 	struct Eval
 	{
-		typedef int result_type;
-
 		int operator()(unsigned int n) const;
 		int operator()(int n) const ;
 		int operator()(std::string s) const;
-		int operator()(operation const& x, int lhs) const;
-		int operator()(signed_ const& x) const;
-		int operator()(varDecl const& x);
-		int operator()(assignment const& x);
-		int operator()(print const& x) const;
+		int operator()(Operation const& x, int lhs) const;
+		int operator()(Signed_ const& x) const;
+		int operator()(VarDecl const& x);
+		int operator()(Assignment const& x);
+		int operator()(Print const& x) const;
 		int operator()(Expr const& x) const;
-		int operator()(statement const& x);
-		int operator()(program const& x);
-		int operator()(whileLoop const& x);
-		int operator()(conditional const& x);
+		int operator()(Statement const& x);
+		int operator()(Program const& x);
+		int operator()(WhileLoop const& x);
+		int operator()(Conditional const& x);
 
-		//Ofc that goes into evironment later on.
-		std::map<std::string, optional<int>> vars;
+		Environment env;
 	};
 }
 
