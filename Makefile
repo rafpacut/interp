@@ -1,6 +1,6 @@
 CXX = g++-7
 ROOT_BOOST = /opt/boost_1_66_0
-CXXFLAGS = -Wall -std=c++14 -I $(ROOT_BOOST)
+CXXFLAGS = -Wall -std=c++14 -I $(ROOT_BOOST) -fdiagnostics-color=always
 
 
 
