@@ -10,7 +10,7 @@ namespace ast
 {
 	using boost::optional;
 
-	struct printer
+	struct Printer
 	{
 		void operator()(unsigned int) const;
 		void operator()(int) const;

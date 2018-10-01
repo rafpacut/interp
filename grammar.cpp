@@ -1,6 +1,8 @@
 namespace grammar 
 {
+	namespace x3 = boost::spirit::x3;
 	using namespace x3;
+
 
         x3::rule<class expression_, ast::Expr> const expression("expression");
         x3::rule<class term_, ast::Expr> const term("term");

@@ -9,10 +9,11 @@
 #include <boost/optional.hpp>
 
 
-namespace x3 = boost::spirit::x3;
-using boost::optional;
 
 namespace ast {
+
+namespace x3 = boost::spirit::x3;
+using boost::optional;
 
 	struct Signed_;
 	struct Expr;

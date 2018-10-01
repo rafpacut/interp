@@ -5,16 +5,19 @@
 #include <fstream>
 #include <string>
 
+#include "env.hpp"
 #include "astPrinter.h"
 #include "eval.h"
 #include "grammar.cpp"
 
+namespace x3 = boost::spirit::x3;
+using namespace x3;
 
 int main(int argc, char **argv) {
 
     auto &parser = grammar::program;
-    ast::program program; 
-    ast::printer print;
+    ast::Program program; 
+    ast::Printer print;
     ast::Eval eval;
 
     using It = std::string::const_iterator;
