@@ -26,6 +26,7 @@ namespace ast{
 		int operator()(Program const& x);
 		int operator()(WhileLoop const& x);
 		int operator()(Conditional const& x);
+		int operator()(std::list<Statement> const& x);
 
 		Environment env;
 	};

@@ -40,11 +40,7 @@ namespace ast{
 
 	int Eval::operator()(Print const& x) const
 	{
-		optional<int> val = vars.at(x.name);
-		if(val)
-			std::cout<<*val<<std::endl;
-		else
-			std::cout<<x.name<<" was not yet initialized."<<std::endl;
+		std::cout<<env.getValue(x.name)<<std::endl;
 
 		return 0;
 	}
@@ -59,13 +55,16 @@ namespace ast{
 		return 0;
 	}
 
-	int Eval::operator()(std::list<Statement> body)
+	int Eval::operator()(const std::list<Statement>& body)
 	{
 		int state = 0;
+		env.createScope();
 		for(Statement const& stmt: body)
 		{
 			state += (*this)(stmt);
 		}
+		env.deleteScope();
+
 		return state;
 	}
 
@@ -74,7 +73,7 @@ namespace ast{
 		if((*this)(x.condition))
 			(*this)(x.tBody);
 		else if(x.fBody)
-			(*this)(x.fBody);
+			(*this)(*x.fBody);
 
 		return 0;
 	}
@@ -92,7 +91,7 @@ namespace ast{
 		int value;
 		value = boost::apply_visitor(*this, x.first);
 
-		for(const operation& o: x.rest)
+		for(const Operation& o: x.rest)
 		{
 			value = (*this)(o, value);
 		}
@@ -106,6 +105,7 @@ namespace ast{
 		{
 			state = (*this)(x.body);
 		}
+
 		return state;
 	}
 
@@ -118,11 +118,13 @@ namespace ast{
 
         int Eval::operator()(Program const& x) 
         {
+	    env.createScope();		
 	    int state = 0;
-            for (statement const& stmt : x.stmts)
+            for (Statement const& stmt : x.stmts)
             {
 		state = (*this)(stmt);
             }
+
             return state;
         }
     }
