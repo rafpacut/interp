@@ -49,7 +49,7 @@ namespace grammar
 
 	const auto print_def
 	=   x3::lit("print(") 
-	    >> name 
+	    >> name >> -('[' >> x3::uint_ >> ']')
 	    >> x3::lit(")")
 	;
 
