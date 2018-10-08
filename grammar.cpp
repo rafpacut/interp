@@ -12,11 +12,14 @@ namespace grammar
 	x3::rule<class name_, std::string> const name("name");
 	x3::rule<class print_, ast::Print> const print("print");
 	x3::rule<class type_, std::string> const type("type");
+	x3::rule<class arrType, std::string> const arrType("arrType");
 	x3::rule<class varDecl_, ast::VarDecl> const varDecl("varDecl");
 	x3::rule<class assignment_, ast::Assignment> const assignment("assignment");
 	x3::rule<class whileLoop_, ast::WhileLoop> const whileLoop("whileLoop");
 	x3::rule<class codeBlock_, std::list<ast::Statement> > const codeBlock("codeBlock");
 	x3::rule<class conditional, ast::Conditional > const conditional("conditional");
+	x3::rule<class arrDecl_, ast::ArrDecl> const arrDecl("arrDecl");
+	x3::rule<class assignmentArr_, ast::AssignmentArr> const assignmentArr("assignmentArr");
 
 
 	const auto type_def
@@ -25,15 +28,24 @@ namespace grammar
 	| string("string")
 	;
 
+	const auto arrType_def
+	= string("array<int>");
 
 	const auto name_def 
 	= (x3::alpha >> *x3::alnum); 
 
 	const auto varDecl_def
-	= type >> name >> -('=' >> expression);
+	=  type >> name >> -('=' >> expression);
+
+	const auto arrDecl_def
+	= arrType >> name; //>> -('=' >> ?init list?);
+	
 
 	const auto assignment_def
 	= name >> '=' >> expression;
+
+	const auto assignmentArr_def
+	= name >> '[' >> x3::uint_ >> ']' >> '=' >> expression;
 
 	const auto print_def
 	=   x3::lit("print(") 
@@ -93,7 +105,9 @@ namespace grammar
 	    whileLoop
 	    | conditional
 	    | (varDecl >> ';')
+	    | (arrDecl >> ';')
 	    | (assignment >> ';')
+	    | (assignmentArr >> ';')
 	    | (expression >> ';')
 	    | (print >> ';')
 	    ;
@@ -110,12 +124,15 @@ namespace grammar
 	  , name
 	  , print
 	  , varDecl
+	  , arrDecl
 	  , assignment
+	  , assignmentArr
 	  , codeBlock
 	  , whileLoop
 	  , conditional
 	  , statement
 	  , type
+	  , arrType
 	  , program
         );
 

@@ -55,6 +55,13 @@ using boost::optional;
 		Expr value;
 	};
 
+	struct AssignmentArr
+	{
+		std::string name;
+		unsigned int idx;
+		Expr value;
+	};
+
 	struct Print 
 	{
 		std::string name;
@@ -67,10 +74,19 @@ using boost::optional;
 	    optional<Expr> value;
 	};
 
+	struct ArrDecl
+	{
+            std::string type;
+            std::string name;
+	    //init list
+	};
+
         struct Statement : x3::variant<
 		VarDecl,
+		ArrDecl,
 		Print,
 		Assignment,
+		AssignmentArr,
 		x3::forward_ast<WhileLoop>,
 		x3::forward_ast<Conditional>,
 		Expr	
@@ -118,6 +134,10 @@ BOOST_FUSION_ADAPT_STRUCT(ast::Expr,
 BOOST_FUSION_ADAPT_STRUCT(ast::VarDecl, 
 		type, name, value
 		)
+	
+BOOST_FUSION_ADAPT_STRUCT(ast::ArrDecl, 
+		type, name
+		)
 
 BOOST_FUSION_ADAPT_STRUCT(ast::Conditional, 
 		condition, tBody, fBody
@@ -125,6 +145,10 @@ BOOST_FUSION_ADAPT_STRUCT(ast::Conditional,
 
 BOOST_FUSION_ADAPT_STRUCT(ast::Assignment, 
 		name, value
+		)
+
+BOOST_FUSION_ADAPT_STRUCT(ast::AssignmentArr, 
+		name, idx, value
 		)
 
 BOOST_FUSION_ADAPT_STRUCT(ast::Print, name)

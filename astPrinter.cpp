@@ -46,6 +46,11 @@ namespace ast
 		std::cout<<')';
 	}
 
+	void Printer::operator()(ArrDecl const& x) const
+	{
+		std::cout<<"(Array Declaration: name= "<<x.name<<')'<<std::endl;
+	}
+
 	void Printer::operator()(Conditional const& x) const
 	{
 		std::cout<<"IF ";
@@ -71,6 +76,13 @@ namespace ast
 		std::cout<<"Assigning value(";
 		(*this)(x.value);
 		std::cout<<") to "<<x.name<<std::endl;
+	}
+
+	void Printer::operator()(AssignmentArr const& x) const
+	{
+		std::cout<<"Assigning value(";
+		(*this)(x.value);
+		std::cout<<") to "<<x.name<<'['<<x.idx<<']'<<std::endl;
 	}
 
 	void Printer::operator()(Expr const& x) const
