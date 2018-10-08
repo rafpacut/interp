@@ -19,7 +19,9 @@ namespace ast{
 		int operator()(Operation const& x, int lhs) const;
 		int operator()(Signed_ const& x) const;
 		int operator()(VarDecl const& x);
+		int operator()(ArrDecl const& x);
 		int operator()(Assignment const& x);
+		int operator()(AssignmentArr const& x);
 		int operator()(Print const& x) const;
 		int operator()(Expr const& x) const;
 		int operator()(Statement const& x);

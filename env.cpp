@@ -1,5 +1,6 @@
 #include "env.hpp"
 #include <algorithm>
+#include <iostream>
 
 namespace ast
 {
@@ -30,10 +31,12 @@ namespace ast
 	{
 		if(idx)
 		{
-			auto vec = intVecs.at(name);
+			auto& vec = intVecs.at(name);
 			
 			if(!vec)//we called assign value to an uninitialized vector.
-				*vec = std::vector<int>();
+			{
+				intVecs.at(name) = std::vector<int>();
+			}
 
 			if(*idx > vec->size())
 				vec->push_back(value);
@@ -50,10 +53,10 @@ namespace ast
 		if(idx) //if looking for array. Incorrect: if passed index.
 		{
 			auto vecPtr = intVecs.find(name);
-			//if we found a vec in this Scope. Negated by Environment::getValue
+			//if we found a vec in this Scope. Redundant with Environment::getValue
 			//but let's keep it here just in case.
 			//if vector is initialized at all
-			//if it has a value 
+			//if it has a value at idx.
 			if(vecPtr != intVecs.end() && vecPtr->second && vecPtr->second->at(*idx))
 				return vecPtr->second->at(*idx);
 			else
@@ -65,7 +68,7 @@ namespace ast
 			if(varPtr != ints.end() && varPtr->second)
 				return *(varPtr->second);
 			else
-				throw std::runtime_error("Using unitnitialized variable: "+name);
+				throw std::runtime_error("Using uninitialized variable: "+name);
 		}
 	}
 
@@ -74,7 +77,7 @@ namespace ast
 		ints.insert({name,value});
 	}
 
-	void Scope::insertValue(const std::string& name, const optional<std::vector<int>&> value)
+	void Scope::insertValue(const std::string& name, const optional<std::vector<int> > value)
 	{
 		intVecs.insert({name, value});
 	}

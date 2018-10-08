@@ -21,13 +21,13 @@ namespace ast
 		void assignValue(std::string, const int&, const optional<unsigned int> = boost::none);
 
 		void insertValue(const std::string&, const optional<int>);
-		void insertValue(const std::string&, const optional<std::vector<int>&>);
+		void insertValue(const std::string&, const optional<std::vector<int>>);
 
 		bool hasVariable(const std::string&) const;
 
 
 		std::unordered_map<std::string, optional<int>> ints;
-		std::unordered_map<std::string, optional< std::vector<int>& >> intVecs;
+		std::unordered_map<std::string, optional< std::vector<int> >> intVecs;
 
 		std::unordered_set<std::string> declaredNames;
 	};

@@ -40,7 +40,7 @@ namespace ast{
 
 	int Eval::operator()(Print const& x) const
 	{
-		std::cout<<env.getValue(x.name)<<std::endl;
+		std::cout<<env.getValue(x.name, x.idx)<<std::endl;
 
 		return 0;
 	}
@@ -52,6 +52,12 @@ namespace ast{
 			value = (*this)(*(x.value));
 		env.declare(x.name, value);
 
+		return 0;
+	}
+
+	int Eval::operator()(ArrDecl const& x)
+	{
+		env.declare(x.name, optional<std::vector<int>>(boost::none));
 		return 0;
 	}
 
@@ -82,6 +88,14 @@ namespace ast{
 	{
 		int value = (*this)(x.value);
 		env.assignValue(x.name, value);
+
+		return 0;
+	}
+
+	int Eval::operator()(AssignmentArr const& x)
+	{
+		int value = (*this)(x.value);
+		env.assignValue(x.name, value, x.idx);
 
 		return 0;
 	}

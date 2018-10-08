@@ -65,6 +65,7 @@ using boost::optional;
 	struct Print 
 	{
 		std::string name;
+		optional<unsigned int> idx;
 	};
 
 	struct VarDecl
@@ -151,7 +152,7 @@ BOOST_FUSION_ADAPT_STRUCT(ast::AssignmentArr,
 		name, idx, value
 		)
 
-BOOST_FUSION_ADAPT_STRUCT(ast::Print, name)
+BOOST_FUSION_ADAPT_STRUCT(ast::Print, name, idx)
 
 
 BOOST_FUSION_ADAPT_STRUCT(ast::Program, stmts)
