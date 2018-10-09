@@ -38,9 +38,35 @@ namespace ast{
 		return 0;
         }
 
+	int Eval::operator()(Comparison const& x) const
+	{
+		int lhs = (*this)(x.lhs);
+		int rhs =  (*this)(x.rhs);
+		switch (x.op)
+		{
+			case '<': return lhs < rhs;
+			case '>': return lhs > rhs;
+		}
+		return 0;
+	}
+
+	int Eval::operator()(ArrValue const& x) const
+	{
+		int idx = (*this)( x.id);
+		return env.getValue(x.name, idx);
+	}
+
 	int Eval::operator()(Print const& x) const
 	{
-		std::cout<<env.getValue(x.name, x.idx)<<std::endl;
+		int val = boost::apply_visitor(*this, x.val);
+		std::cout<<val<<std::endl;
+		//if(x.idx)
+		//{
+		//	int idx = (*this)(*(x.idx));
+		//	std::cout<<env.getValue(x.name, idx)<<std::endl;
+		//}
+		//else
+		//	std::cout<<env.getValue(x.name, boost::none)<<std::endl;
 
 		return 0;
 	}
@@ -95,7 +121,8 @@ namespace ast{
 	int Eval::operator()(AssignmentArr const& x)
 	{
 		int value = (*this)(x.value);
-		env.assignValue(x.name, value, x.idx);
+		int id = (*this)(x.id.id);
+		env.assignValue(x.id.name, value, id);
 
 		return 0;
 	}

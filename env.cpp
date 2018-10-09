@@ -38,7 +38,9 @@ namespace ast
 				intVecs.at(name) = std::vector<int>();
 			}
 
-			if(*idx > vec->size())
+			if(*idx > vec->size()+1)
+				throw std::runtime_error("Index much greater than vector size");
+			if(*idx == vec->size())
 				vec->push_back(value);
 			else
 				vec->at(*idx) = value;

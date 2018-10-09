@@ -33,9 +33,24 @@ namespace ast
             }
         }
 
+	void Printer::operator()(Comparison const& x) const
+	{
+		(*this)(x.lhs);
+		std::cout<<x.op;
+		(*this)(x.rhs);
+	}
+
 	void Printer::operator()(Print const& x) const
 	{
-		std::cout<<"Print "<<x.name<<std::endl;
+		std::cout<<"Print ";
+		boost::apply_visitor(*this, x.val);
+		//if(x.idx)
+		//{
+		//	std::cout<<'[';
+		//	(*this)(*(x.idx));
+		//	std::cout<<']';	
+		//}
+		std::cout<<std::endl;
 	}
 
 	void Printer::operator()(VarDecl const& x) const
@@ -49,6 +64,13 @@ namespace ast
 	void Printer::operator()(ArrDecl const& x) const
 	{
 		std::cout<<"(Array Declaration: name= "<<x.name<<')'<<std::endl;
+	}
+
+	void Printer::operator()(ArrValue const& x) const
+	{
+		std::cout<<"(Array Value: name= "<<x.name;
+		(*this)(x.id);
+		std::cout<<')'<<std::endl;
 	}
 
 	void Printer::operator()(Conditional const& x) const
@@ -82,7 +104,9 @@ namespace ast
 	{
 		std::cout<<"Assigning value(";
 		(*this)(x.value);
-		std::cout<<") to "<<x.name<<'['<<x.idx<<']'<<std::endl;
+		std::cout<<") to ";
+		(*this)(x.id);
+		std::cout<<std::endl;
 	}
 
 	void Printer::operator()(Expr const& x) const

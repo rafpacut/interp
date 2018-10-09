@@ -19,12 +19,14 @@ using boost::optional;
 	struct Expr;
 	struct WhileLoop;
 	struct Conditional;
+	struct ArrValue;
 
         struct Operand : x3::variant<
               unsigned int
 	      , std::string //name of a variable
               , x3::forward_ast<Signed_>
               , x3::forward_ast<Expr>
+	      , x3::forward_ast<ArrValue>
             >
         {
             using base_type::base_type;
@@ -49,23 +51,34 @@ using boost::optional;
 		std::list<Operation> rest;
 	};
 
+	struct Comparison
+	{
+		Expr lhs;
+		char op;
+		Expr rhs;
+	};
+
 	struct Assignment
 	{
 		std::string name;
 		Expr value;
 	};
 
-	struct AssignmentArr
+	struct ArrValue
 	{
 		std::string name;
-		unsigned int idx;
+		Expr id;
+	};
+
+	struct AssignmentArr
+	{
+		ArrValue id;
 		Expr value;
 	};
 
 	struct Print 
 	{
-		std::string name;
-		optional<unsigned int> idx;
+		boost::variant<std::string, unsigned int, ArrValue> val;
 	};
 
 	struct VarDecl
@@ -90,7 +103,7 @@ using boost::optional;
 		AssignmentArr,
 		x3::forward_ast<WhileLoop>,
 		x3::forward_ast<Conditional>,
-		Expr	
+		Expr
 	>
 	{
 		using base_type::base_type;
@@ -99,14 +112,14 @@ using boost::optional;
 
 	struct Conditional
 	{
-		Expr condition;
+		Comparison condition;
 		std::list<Statement> tBody;
 		optional<std::list<Statement>> fBody;
 	};
 
 	struct WhileLoop
 	{
-		Expr condition;
+		Comparison condition;
 		std::list<Statement> body;
 	};
 
@@ -120,10 +133,6 @@ BOOST_FUSION_ADAPT_STRUCT(ast::Signed_,
     sign, operand_
 )
 
-BOOST_FUSION_ADAPT_STRUCT(ast::WhileLoop,
-		condition, body
-		)
-
 BOOST_FUSION_ADAPT_STRUCT(ast::Operation,
     operator_, operand_
 )
@@ -132,12 +141,24 @@ BOOST_FUSION_ADAPT_STRUCT(ast::Expr,
 		first, rest
 		)
 
+BOOST_FUSION_ADAPT_STRUCT(ast::Comparison,
+		lhs, op, rhs 
+)
+
+BOOST_FUSION_ADAPT_STRUCT(ast::WhileLoop,
+		condition, body
+		)
+
 BOOST_FUSION_ADAPT_STRUCT(ast::VarDecl, 
 		type, name, value
 		)
 	
 BOOST_FUSION_ADAPT_STRUCT(ast::ArrDecl, 
 		type, name
+		)
+
+BOOST_FUSION_ADAPT_STRUCT(ast::ArrValue, 
+		name, id
 		)
 
 BOOST_FUSION_ADAPT_STRUCT(ast::Conditional, 
@@ -149,10 +170,10 @@ BOOST_FUSION_ADAPT_STRUCT(ast::Assignment,
 		)
 
 BOOST_FUSION_ADAPT_STRUCT(ast::AssignmentArr, 
-		name, idx, value
+		id, value
 		)
 
-BOOST_FUSION_ADAPT_STRUCT(ast::Print, name, idx)
+BOOST_FUSION_ADAPT_STRUCT(ast::Print, val)
 
 
 BOOST_FUSION_ADAPT_STRUCT(ast::Program, stmts)

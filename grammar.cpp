@@ -15,11 +15,13 @@ namespace grammar
 	x3::rule<class arrType, std::string> const arrType("arrType");
 	x3::rule<class varDecl_, ast::VarDecl> const varDecl("varDecl");
 	x3::rule<class assignment_, ast::Assignment> const assignment("assignment");
+	x3::rule<class comparison_, ast::Comparison> const comparison("comparison");
 	x3::rule<class whileLoop_, ast::WhileLoop> const whileLoop("whileLoop");
-	x3::rule<class codeBlock_, std::list<ast::Statement> > const codeBlock("codeBlock");
 	x3::rule<class conditional, ast::Conditional > const conditional("conditional");
+	x3::rule<class codeBlock_, std::list<ast::Statement> > const codeBlock("codeBlock");
 	x3::rule<class arrDecl_, ast::ArrDecl> const arrDecl("arrDecl");
 	x3::rule<class assignmentArr_, ast::AssignmentArr> const assignmentArr("assignmentArr");
+	x3::rule<class arrValue, ast::ArrValue> const arrValue("arrValue");
 
 
 	const auto type_def
@@ -44,17 +46,25 @@ namespace grammar
 	const auto assignment_def
 	= name >> '=' >> expression;
 
+	const auto arrValue_def
+	= name >> '[' >> expression >> ']';
+
 	const auto assignmentArr_def
-	= name >> '[' >> x3::uint_ >> ']' >> '=' >> expression;
+	= arrValue >> '=' >> expression;
 
 	const auto print_def
 	=   x3::lit("print(") 
-	    >> name >> -('[' >> x3::uint_ >> ']')
+	    >>(
+	        x3::uint_
+	      | arrValue
+	      | name 
+	      )
 	    >> x3::lit(")")
 	;
 
 	const auto conditional_def
-	= x3::lit("if(") >> expression >> ')'
+	= x3::lit("if")
+	  >>'(' >> comparison >> ')'
 	  >> codeBlock
 	  >> -(x3::lit("else") >> codeBlock)
 	 ;
@@ -64,14 +74,13 @@ namespace grammar
             term
             >> *(   (char_('+') > term)
                 |   (char_('-') > term)
-		|   (char_('+') > name)
-		|   (char_('-') > name)
                 )
             ;
  
         const auto factor_def 
         =
-                x3::uint_
+	        x3::uint_
+            |   arrValue
             |   name		
             |   ('(' > expression > ')')
             |   (char_('-') > factor)
@@ -86,6 +95,14 @@ namespace grammar
                 )
             ;
 
+	const auto comparison_def
+	=
+	    expression 
+	    >> (char_('<') | char_('>')) 
+	    >> expression
+	    ;
+
+
 	const auto codeBlock_def
 	= 
 	    '{'
@@ -96,7 +113,7 @@ namespace grammar
 	const auto whileLoop_def
 	= 
 	    x3::lit("while") 
-	    >> '(' >> expression >> ')'
+	    >> '(' >> comparison >> ')'
 	    >> codeBlock
 	    ;
  
@@ -121,10 +138,12 @@ namespace grammar
             expression
           , term
           , factor
+	  , comparison
 	  , name
 	  , print
 	  , varDecl
 	  , arrDecl
+	  , arrValue
 	  , assignment
 	  , assignmentArr
 	  , codeBlock
