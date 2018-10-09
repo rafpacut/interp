@@ -38,7 +38,7 @@ int main(int argc, char **argv) {
 		print(program);
 		try
 		{
-			std::cout<<'\n'<<eval(program)<<'\n';
+			eval(program);
 		}
 		catch(std::runtime_error& e)
 		{
