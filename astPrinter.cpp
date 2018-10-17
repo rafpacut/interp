@@ -44,12 +44,6 @@ namespace ast
 	{
 		std::cout<<"Print ";
 		boost::apply_visitor(*this, x.val);
-		//if(x.idx)
-		//{
-		//	std::cout<<'[';
-		//	(*this)(*(x.idx));
-		//	std::cout<<']';	
-		//}
 		std::cout<<std::endl;
 	}
 

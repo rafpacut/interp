@@ -52,7 +52,7 @@ namespace ast{
 
 	int Eval::operator()(ArrValue const& x) const
 	{
-		int idx = (*this)( x.id);
+		int idx = (*this)( x.idx);
 		return env.getValue(x.name, idx);
 	}
 
@@ -60,13 +60,6 @@ namespace ast{
 	{
 		int val = boost::apply_visitor(*this, x.val);
 		std::cout<<val<<std::endl;
-		//if(x.idx)
-		//{
-		//	int idx = (*this)(*(x.idx));
-		//	std::cout<<env.getValue(x.name, idx)<<std::endl;
-		//}
-		//else
-		//	std::cout<<env.getValue(x.name, boost::none)<<std::endl;
 
 		return 0;
 	}
@@ -121,7 +114,7 @@ namespace ast{
 	int Eval::operator()(AssignmentArr const& x)
 	{
 		int value = (*this)(x.value);
-		int id = (*this)(x.id.id);
+		int id = (*this)(x.id.idx);
 		env.assignValue(x.id.name, value, id);
 
 		return 0;

@@ -67,7 +67,7 @@ using boost::optional;
 	struct ArrValue
 	{
 		std::string name;
-		Expr id;
+		Expr idx;
 	};
 
 	struct AssignmentArr
