@@ -158,7 +158,7 @@ BOOST_FUSION_ADAPT_STRUCT(ast::ArrDecl,
 		)
 
 BOOST_FUSION_ADAPT_STRUCT(ast::ArrValue, 
-		name, id
+		name, idx
 		)
 
 BOOST_FUSION_ADAPT_STRUCT(ast::Conditional, 

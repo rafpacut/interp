@@ -63,7 +63,7 @@ namespace ast
 	void Printer::operator()(ArrValue const& x) const
 	{
 		std::cout<<"(Array Value: name= "<<x.name;
-		(*this)(x.id);
+		(*this)(x.idx);
 		std::cout<<')'<<std::endl;
 	}
 
