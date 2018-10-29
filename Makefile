@@ -16,14 +16,14 @@ astPrinter:
 eval: 
 	$(CXX) $(CXXFLAGS) -c eval.cpp
 
-env:
+env: eval
 	$(CXX) $(CXXFLAGS) -c env.cpp
 
 clean:
 	rm *.o
 	 
-rebuildDebug: astPrinter eval env
-	$(CXX) $(DEBUGFLAGS) $(CXXFLAGS) env.o eval.o astPrinter.o main.cpp -o dinterp.a
+rebuildDebug: 
+	$(CXX) $(DEBUGFLAGS) $(CXXFLAGS) env.cpp eval.cpp astPrinter.cpp main.cpp -o dinterp.a
 
 buildDebug: 
 	$(CXX) $(DEBUGFLAGS) $(CXXFLAGS) env.o eval.o astPrinter.o main.cpp -o dinterp.a
