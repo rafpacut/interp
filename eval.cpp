@@ -147,12 +147,12 @@ namespace ast{
 	{
 		int value = 0;
 		value = boost::apply_visitor(*this, x);
+		printEnv(env);
 		return value;
 	}
 
         int Eval::operator()(Program const& x) 
         {
-	    env.createScope();		
 	    int state = 0;
             for (Statement const& stmt : x.stmts)
             {

@@ -1,9 +1,14 @@
 #include "env.hpp"
 #include <algorithm>
-#include <iostream>
 
 namespace ast
 {
+
+	Environment::Environment()
+	{
+		this->createScope();
+	}
+
 	int Environment::getValue(const std::string& name, optional<unsigned int> idx) const
 	{
 		auto res = std::find_if(scopes.crbegin(), scopes.crend(),

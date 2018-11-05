@@ -66,24 +66,35 @@ int main(int argc, char **argv) {
 	    std::cout << "Type an expression...or [q or Q] to quit\n\n";
 
 
-	    while (std::getline(std::cin, str)) {
-		if (str.empty() || str[0] == 'q' || str[0] == 'Q')
+	    while (std::getline(std::cin, str)) 
+	    {
+		if (str[0] == 'q' || str[0] == 'Q')
 		    break;
+		if(str.empty())
+		       	continue;
 
 		It iter = str.begin(), end = str.end();
-		if (phrase_parse(iter, end, parser, x3::space, program)) {
+		if (phrase_parse(iter, end, parser, x3::space, program)) 
+		{
 		    std::cout << "Parsing succeeded\n";
 		    print(program);
 
 		    try
 		    {
-			    std::cout<<'\n'<<eval(program)<<'\n';
+			   eval(program);
 		    }
 		    catch(std::runtime_error& e)
 		    {
 			    std::cout<<e.what()<<std::endl;
 		    }
-		    catch(...){}//do nothing. Rn all throwable exceptions allow processing of the next query.
+	            catch(std::out_of_range& e)
+		    {
+		            std::cout<<"Using undeclared variable"<<std::endl;
+		    }
+		    catch(...)
+		    {
+			    std::cout<<"Caught an error"<<std::endl;
+		    }//do nothing. Rn all throwable exceptions allow processing of the next query.
 		}
 		else
 		    std::cout << "Parsing failed\n";

@@ -25,7 +25,6 @@ namespace ast
 
 		bool hasVariable(const std::string&) const;
 
-
 		std::unordered_map<std::string, optional<int>> ints;
 		std::unordered_map<std::string, optional< std::vector<int> >> intVecs;
 
@@ -36,6 +35,8 @@ namespace ast
 
 	struct Environment
 	{
+		Environment();
+
 		template<typename T>
 		void declare(const std::string&, const optional<T>);
 

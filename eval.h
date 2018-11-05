@@ -2,10 +2,11 @@
 #define EVAL_H_
 
 #include <map>
-#include "ast.h"
-#include "env.hpp"
 #include <iostream>
 #include <boost/optional.hpp>
+#include "ast.h"
+#include "env.hpp"
+#include "envPrinter.cpp"
 
 namespace ast{
 
@@ -33,6 +34,7 @@ namespace ast{
 		int operator()(std::list<Statement> const& x);
 
 		Environment env;
+		envPrinter printEnv;
 	};
 }
 
