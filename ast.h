@@ -20,6 +20,7 @@ using boost::optional;
 	struct WhileLoop;
 	struct Conditional;
 	struct ArrValue;
+	struct FunctionDecl;
 
         struct Operand : x3::variant<
               unsigned int
@@ -95,9 +96,16 @@ using boost::optional;
 	    //init list
 	};
 
+	struct FunctionCall
+	{
+		std::string name;
+
+	};
+
         struct Statement : x3::variant<
 		VarDecl,
 		ArrDecl,
+		x3::forward_ast<FunctionDecl>,
 		Print,
 		Assignment,
 		AssignmentArr,
@@ -109,6 +117,15 @@ using boost::optional;
 		using base_type::base_type;
 		using base_type::operator=;
         };
+
+	struct FunctionDecl
+	{
+		std::string type;
+		std::string name;
+		std::list<x3::variant<ArrDecl, VarDecl>> args;
+		std::list<Statement> body;
+	};
+
 
 	struct Conditional
 	{
@@ -155,6 +172,10 @@ BOOST_FUSION_ADAPT_STRUCT(ast::VarDecl,
 	
 BOOST_FUSION_ADAPT_STRUCT(ast::ArrDecl, 
 		type, name
+		)
+
+BOOST_FUSION_ADAPT_STRUCT(ast::FunctionDecl,
+	       	type, name, args, body
 		)
 
 BOOST_FUSION_ADAPT_STRUCT(ast::ArrValue, 

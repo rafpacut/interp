@@ -161,4 +161,27 @@ namespace ast{
 
             return state;
         }
+
+	int Eval::operator()(FunctionDecl const& x)
+	{
+		return 0;
+	}
+
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

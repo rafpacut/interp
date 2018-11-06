@@ -19,6 +19,7 @@ namespace ast
 		void operator()(Signed_ const&) const;
 		void operator()(VarDecl const&) const;
 		void operator()(ArrDecl const&) const;
+		void operator()(FunctionDecl const&) const;
 		void operator()(ArrValue const&) const;
 		void operator()(Assignment const&) const;
 		void operator()(AssignmentArr const&) const;

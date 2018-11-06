@@ -22,6 +22,7 @@ namespace grammar
 	x3::rule<class arrDecl_, ast::ArrDecl> const arrDecl("arrDecl");
 	x3::rule<class assignmentArr_, ast::AssignmentArr> const assignmentArr("assignmentArr");
 	x3::rule<class arrValue, ast::ArrValue> const arrValue("arrValue");
+	x3::rule<class functionDecl, ast::FunctionDecl> const functionDecl("functionDecl");
 
 
 	const auto type_def
@@ -42,6 +43,11 @@ namespace grammar
 	const auto arrDecl_def
 	= arrType >> name; //>> -('=' >> ?init list?);
 	
+	const auto functionDecl_def
+	= 
+	    type >> name >> '(' >> +(varDecl | arrDecl) >> ')'
+	    >> codeBlock
+	    ;
 
 	const auto assignment_def
 	= name >> '=' >> expression;
@@ -119,7 +125,8 @@ namespace grammar
  
 	const auto statement_def 
 	= 
-	    whileLoop
+	    functionDecl
+	    | whileLoop
 	    | conditional
 	    | (varDecl >> ';')
 	    | (arrDecl >> ';')
@@ -128,6 +135,7 @@ namespace grammar
 	    | (expression >> ';')
 	    | (print >> ';')
 	    ;
+
 
 	const auto program_def 
 	= +statement
@@ -143,6 +151,7 @@ namespace grammar
 	  , print
 	  , varDecl
 	  , arrDecl
+	  , functionDecl
 	  , arrValue
 	  , assignment
 	  , assignmentArr

@@ -139,4 +139,19 @@ namespace ast
 		std::cout<<'\n';
             }
         }
+
+	void Printer::operator()(FunctionDecl const& x) const
+	{
+		std::cout<<"Function "<<x.name;
+	}
+
 }
+
+
+
+
+
+
+
+
+

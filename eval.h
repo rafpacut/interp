@@ -21,6 +21,7 @@ namespace ast{
 		int operator()(Signed_ const& x) const;
 		int operator()(VarDecl const& x);
 		int operator()(ArrDecl const& x);
+		int operator()(FunctionDecl const& x);
 		int operator()(ArrValue const& x) const;
 		int operator()(Assignment const& x);
 		int operator()(AssignmentArr const& x);
