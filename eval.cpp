@@ -111,6 +111,12 @@ namespace ast{
 		return 0;
 	}
 
+	int Eval::operator()(CopyValue const& x)
+	{
+		env.copyValue(x.from, x.to);
+		return 0;
+	}
+
 	int Eval::operator()(AssignmentArr const& x)
 	{
 		int value = (*this)(x.value);

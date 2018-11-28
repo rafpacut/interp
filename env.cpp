@@ -1,9 +1,9 @@
 #include "env.hpp"
 #include <algorithm>
+#include <boost/any.hpp>
 
 namespace ast
 {
-
 	Environment::Environment()
 	{
 		this->createScope();
@@ -32,7 +32,67 @@ namespace ast
 		scopes.pop_back();
 	}
 
-	void Scope::assignValue(std::string name, const int& value, const optional<unsigned int> idx)
+	void Environment::copyValue(const std::string& fromName, const std::string& toName)
+	{
+		auto fromScopeIt = std::find_if(scopes.crbegin(), scopes.crend(),
+				[&fromName](Scope const& s){ return s.hasVariable(fromName);});
+
+		auto toScopeIt = std::find_if(scopes.rbegin(), scopes.rend(),
+				[&toName](Scope const& s){ return s.hasVariable(toName);});
+
+		if(fromScopeIt == scopes.rend())
+			throw std::runtime_error("Cannot find variable with name "+fromName);
+		if(toScopeIt == scopes.rend())
+			throw std::runtime_error("Cannot find variable with name "+toName);
+
+		try
+		{
+			toScopeIt->ints.at(toName) = fromScopeIt->ints.at(fromName);
+		}
+		catch(...)
+		{
+			try
+			{
+				toScopeIt->intVecs.at(toName) = fromScopeIt->intVecs.at(fromName);
+			}
+			catch(...)
+			{
+				throw std::runtime_error("Env::copyValue");
+			}
+		}
+	}
+
+	int Scope::getValue(const std::string& name, const optional<unsigned int> idx) const
+	{
+		//Thats not dry nor pretty.
+		if(idx) //if looking for array. Incorrect: if passed index.
+		{
+			auto vecPtr = intVecs.find(name);
+			//if we found a vec in this Scope. Redundant with Environment::getValue
+			//but let's keep it here just in case.
+			//if vector is initialized at all
+			//if it has a value at idx.
+			if(vecPtr != intVecs.end() && vecPtr->second && vecPtr->second->at(*idx))
+				return vecPtr->second->at(*idx);
+			else
+				throw std::runtime_error("Using uninitialized variable: "+name);
+		}
+		else
+		{
+			return *(ints.at(name));
+		}
+	}
+
+	void Scope::assignValue(const std::string name, const optional<std::vector<int>>& value)
+	{
+		auto vecIt = intVecs.find(name);
+		if(vecIt == intVecs.end())
+			throw std::runtime_error("Cannot copy an array into an int.");
+
+		vecIt->second = value;	
+	}
+
+	void Scope::assignValue(const std::string name, const int& value, const optional<unsigned int> idx)
 	{
 		if(idx)
 		{
@@ -52,31 +112,6 @@ namespace ast
 		}
 		else
 			ints.at(name) = value;
-	}
-
-	int Scope::getValue(const std::string& name, const optional<unsigned int> idx) const
-	{
-		//Thats not dry nor pretty.
-		if(idx) //if looking for array. Incorrect: if passed index.
-		{
-			auto vecPtr = intVecs.find(name);
-			//if we found a vec in this Scope. Redundant with Environment::getValue
-			//but let's keep it here just in case.
-			//if vector is initialized at all
-			//if it has a value at idx.
-			if(vecPtr != intVecs.end() && vecPtr->second && vecPtr->second->at(*idx))
-				return vecPtr->second->at(*idx);
-			else
-				throw std::runtime_error("Using unitnitialized variable: "+name);
-		}
-		else
-		{
-			auto varPtr = ints.find(name);
-			if(varPtr != ints.end() && varPtr->second)
-				return *(varPtr->second);
-			else
-				throw std::runtime_error("Using uninitialized variable: "+name);
-		}
 	}
 
 	void Scope::insertValue(const std::string& name, const optional<int> value)

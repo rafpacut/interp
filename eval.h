@@ -24,6 +24,7 @@ namespace ast{
 		int operator()(FunctionDecl const& x);
 		int operator()(ArrValue const& x) const;
 		int operator()(Assignment const& x);
+		int operator()(CopyValue const& x);
 		int operator()(AssignmentArr const& x);
 		int operator()(Print const& x) const;
 		int operator()(Comparison const& x) const;

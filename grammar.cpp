@@ -15,6 +15,7 @@ namespace grammar
 	x3::rule<class arrType, std::string> const arrType("arrType");
 	x3::rule<class varDecl_, ast::VarDecl> const varDecl("varDecl");
 	x3::rule<class assignment_, ast::Assignment> const assignment("assignment");
+	x3::rule<class copyValue, ast::CopyValue> const copyValue("copyValue");
 	x3::rule<class comparison_, ast::Comparison> const comparison("comparison");
 	x3::rule<class whileLoop_, ast::WhileLoop> const whileLoop("whileLoop");
 	x3::rule<class conditional, ast::Conditional > const conditional("conditional");
@@ -51,6 +52,9 @@ namespace grammar
 
 	const auto assignment_def
 	= name >> '=' >> expression;
+
+	const auto copyValue_def
+	= name >> '=' >> name;
 
 	const auto arrValue_def
 	= name >> '[' >> expression >> ']';
@@ -130,6 +134,7 @@ namespace grammar
 	    | conditional
 	    | (varDecl >> ';')
 	    | (arrDecl >> ';')
+	    | (copyValue >> ';')
 	    | (assignment >> ';')
 	    | (assignmentArr >> ';')
 	    | (expression >> ';')
@@ -154,6 +159,7 @@ namespace grammar
 	  , functionDecl
 	  , arrValue
 	  , assignment
+	  , copyValue
 	  , assignmentArr
 	  , codeBlock
 	  , whileLoop

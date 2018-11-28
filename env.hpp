@@ -18,7 +18,8 @@ namespace ast
 
 		int getValue(const std::string&, const optional<unsigned int> = boost::none) const;
 
-		void assignValue(std::string, const int&, const optional<unsigned int> = boost::none);
+		void assignValue(const std::string, const int&, const optional<unsigned int> = boost::none);
+		void assignValue(const std::string, const optional<std::vector<int>>&);
 
 		void insertValue(const std::string&, const optional<int>);
 		void insertValue(const std::string&, const optional<std::vector<int>>);
@@ -44,6 +45,8 @@ namespace ast
 
 		template<typename T>
 		void assignValue(const std::string&, const T& value, optional<unsigned int> id = boost::none);
+
+		void copyValue(const std::string&, const std::string&);
 
 		void createScope();
 		void deleteScope();

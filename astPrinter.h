@@ -21,6 +21,7 @@ namespace ast
 		void operator()(ArrDecl const&) const;
 		void operator()(FunctionDecl const&) const;
 		void operator()(ArrValue const&) const;
+		void operator()(CopyValue const&) const;
 		void operator()(Assignment const&) const;
 		void operator()(AssignmentArr const&) const;
 		void operator()(Print const&) const;
