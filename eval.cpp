@@ -1,18 +1,20 @@
 #include "eval.h"
+#include <string>
+#include <iterator>
 
 
 namespace ast{
 
-        int Eval::operator()(unsigned int n) const { return n; }
+        int Eval::operator()(unsigned int n)  { return n; }
 	
-	int Eval::operator()(int n) const { return n; }
+	int Eval::operator()(int n)  { return n; }
 
-	int Eval::operator()(std::string s) const
+	int Eval::operator()(std::string s) 
 	{
 		return env.getValue(s);
 	}
 
-        int Eval::operator()(Operation const& x, int lhs) const
+        int Eval::operator()(Operation const& x, int lhs) 
         {
 	    int rhs = boost::apply_visitor(*this, x.operand_);
             switch (x.operator_)
@@ -26,7 +28,7 @@ namespace ast{
             return 0;
         }
 
-        int Eval::operator()(Signed_ const& x) const
+        int Eval::operator()(Signed_ const& x) 
         {
 		int rhs = boost::apply_visitor(*this, x.operand_);
 		switch (x.sign)
@@ -38,10 +40,10 @@ namespace ast{
 		return 0;
         }
 
-	int Eval::operator()(Comparison const& x) const
+	int Eval::operator()(Comparison const& x) 
 	{
 		int lhs = (*this)(x.lhs);
-		int rhs =  (*this)(x.rhs);
+		int rhs = (*this)(x.rhs);
 		switch (x.op)
 		{
 			case '<': return lhs < rhs;
@@ -50,13 +52,13 @@ namespace ast{
 		return 0;
 	}
 
-	int Eval::operator()(ArrValue const& x) const
+	int Eval::operator()(ArrValue const& x) 
 	{
 		int idx = (*this)( x.idx);
 		return env.getValue(x.name, idx);
 	}
 
-	int Eval::operator()(Print const& x) const
+	int Eval::operator()(Print const& x) 
 	{
 		int val = boost::apply_visitor(*this, x.val);
 		std::cout<<val<<std::endl;
@@ -126,7 +128,7 @@ namespace ast{
 		return 0;
 	}
 
-	int Eval::operator()(Expr const& x) const
+	int Eval::operator()(Expr const& x) 
 	{
 		int value;
 		value = boost::apply_visitor(*this, x.first);

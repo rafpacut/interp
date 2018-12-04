@@ -1,6 +1,6 @@
 #include "env.hpp"
 #include <algorithm>
-#include <boost/any.hpp>
+#include <iterator>
 
 namespace ast
 {
@@ -15,7 +15,7 @@ namespace ast
 				[&name](Scope const& s){ return s.hasVariable(name);});
 
 		if(res == scopes.crend())
-			throw std::runtime_error("Using uninitialized variable "+name);
+			throw std::runtime_error("Cannot find variable with name "+name);
 
 		return res->getValue(name, idx);
 	}
@@ -45,27 +45,35 @@ namespace ast
 		if(toScopeIt == scopes.rend())
 			throw std::runtime_error("Cannot find variable with name "+toName);
 
-		try
-		{
-			toScopeIt->ints.at(toName) = fromScopeIt->ints.at(fromName);
-		}
-		catch(...)
-		{
-			try
-			{
-				toScopeIt->intVecs.at(toName) = fromScopeIt->intVecs.at(fromName);
-			}
-			catch(...)
-			{
-				throw std::runtime_error("Env::copyValue");
-			}
-		}
+	      auto& toInts = toScopeIt->ints;
+	      auto& fromInts = fromScopeIt->ints;
+	
+	      auto& fromIntVecs = fromScopeIt->intVecs;
+	      auto& toIntVecs = toScopeIt->intVecs;
+	
+	      //If are both ints
+	      if(toInts.find(toName) != toInts.end() && fromInts.find(fromName) != fromInts.end())
+	      {
+	      	toScopeIt->ints.at(toName) = fromScopeIt->ints.at(fromName);
+	      }
+	      //if are both vectors
+	      else if(toIntVecs.find(toName) != toIntVecs.end() && fromIntVecs.find(fromName) != fromIntVecs.end())
+	      {
+	      	toScopeIt->intVecs.at(toName) = fromScopeIt->intVecs.at(fromName);
+	      }
+	      else
+	      	throw std::runtime_error("Cross-type assignment");
 	}
+
+	void Environment::declare(const Function& fun)
+	{
+		functions.push_back(fun);
+	}
+
 
 	int Scope::getValue(const std::string& name, const optional<unsigned int> idx) const
 	{
-		//Thats not dry nor pretty.
-		if(idx) //if looking for array. Incorrect: if passed index.
+		if(idx) 
 		{
 			auto vecPtr = intVecs.find(name);
 			//if we found a vec in this Scope. Redundant with Environment::getValue
@@ -83,16 +91,7 @@ namespace ast
 		}
 	}
 
-	void Scope::assignValue(const std::string name, const optional<std::vector<int>>& value)
-	{
-		auto vecIt = intVecs.find(name);
-		if(vecIt == intVecs.end())
-			throw std::runtime_error("Cannot copy an array into an int.");
-
-		vecIt->second = value;	
-	}
-
-	void Scope::assignValue(const std::string name, const int& value, const optional<unsigned int> idx)
+	void Scope::assignValue(const std::string name, const int value, const optional<unsigned int> idx)
 	{
 		if(idx)
 		{
@@ -128,7 +127,6 @@ namespace ast
 	{
 		return declaredNames.find(name) != declaredNames.end();
 	}
-
 }
 
 

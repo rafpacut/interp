@@ -7,6 +7,8 @@
 #include <unordered_map>
 #include <unordered_set>
 
+#include "ast.h"
+
 namespace ast 
 {
 	using boost::optional;
@@ -18,7 +20,7 @@ namespace ast
 
 		int getValue(const std::string&, const optional<unsigned int> = boost::none) const;
 
-		void assignValue(const std::string, const int&, const optional<unsigned int> = boost::none);
+		void assignValue(const std::string, const int, const optional<unsigned int> = boost::none);
 		void assignValue(const std::string, const optional<std::vector<int>>&);
 
 		void insertValue(const std::string&, const optional<int>);
@@ -74,7 +76,10 @@ namespace ast
 			throw std::runtime_error("Cannot find variable with name "+name);
 
 
-		res->assignValue(name, value, idx);
+		if(*idx)
+			res->assignValue(name, value, *idx);
+		else
+			res->assignValue(name, value);
 	}
 
 	template<typename T>
