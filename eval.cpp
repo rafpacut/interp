@@ -191,22 +191,20 @@ namespace ast{
 		Function f = *fIt;
 
 		//create new environment
-		callStack.push(env);
+		callStack.push(env); 
 		env = Environment(env);
 
 		//Declare all arguments
 		if(x.args.size() != f.args.size())
 			throw std::runtime_error("Expected "+std::to_string(f.args.size())+" arguments, got "+std::to_string(x.args.size()));
 
-		//paramsVisitor -> passParams?
-		FunctionPassParamsVisitor paramsVisitor(*this);
+		FunctionPassParamsVisitor passParams(*this);
 		
-		//I do trip up on 'f' and 'x'.
 		for(size_t i = 0; i < x.args.size(); i++) 
-			boost::apply_visitor(paramsVisitor, f.args[i], x.args[i]);
+			boost::apply_visitor(passParams, f.args[i], x.args[i]);
 
 
-		int state = (*this)(f.body); //for now. Later I'll implement special 'return' statement.
+		int state = (*this)(f.body); //Until 'return'
 		env = callStack.top();
 		callStack.pop();
 		return state;
