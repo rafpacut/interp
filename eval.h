@@ -37,6 +37,11 @@ namespace ast{
 		int operator()(Conditional const& x);
 		int operator()(std::list<Statement> const& x);
 
+
+		FunctionDecl getFunction(std::string fName);
+		void passParameters(FunctionDecl::argDeclVec argDecls, FunctionCall::argVec argValues);
+
+
 		Environment env;
 		envPrinter printEnv;
 

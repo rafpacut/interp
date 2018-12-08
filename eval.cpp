@@ -179,36 +179,41 @@ namespace ast{
 
 	int Eval::operator()(const FunctionCall& x) 
 	{
-		//obtain called function
-		using Function = FunctionDecl;
-		std::string targetFName = x.name;
-		auto fIt = std::find_if(std::begin(env.functions), std::end(env.functions), 
-				[&targetFName](const Function& f){return f.name == targetFName;});
+		FunctionDecl f = getFunction(x.name);
 
-		if(fIt == std::end(env.functions))
-			throw std::runtime_error("No function named "+x.name);
-
-		Function f = *fIt;
-
-		//create new environment
 		callStack.push(env); 
 		env = Environment(env);
 
-		//Declare all arguments
-		if(x.args.size() != f.args.size())
-			throw std::runtime_error("Expected "+std::to_string(f.args.size())+" arguments, got "+std::to_string(x.args.size()));
-
-		FunctionPassParamsVisitor passParams(*this);
-		
-		for(size_t i = 0; i < x.args.size(); i++) 
-			boost::apply_visitor(passParams, f.args[i], x.args[i]);
-
+		passParameters(f.args, x.args);
 
 		int state = (*this)(f.body); //Until 'return'
 		env = callStack.top();
 		callStack.pop();
 		return state;
 	}
+
+	FunctionDecl Eval::getFunction(std::string fName)
+	{
+		auto fIt = std::find_if(std::begin(env.functions), std::end(env.functions), 
+				[&fName](const FunctionDecl& f){return f.name == fName;});
+
+		if(fIt == std::end(env.functions))
+			throw std::runtime_error("No function named "+fName);
+
+		return *fIt;
+	}
+
+	void Eval::passParameters(FunctionDecl::argDeclVec argDecls, FunctionCall::argVec argValues)
+	{
+		if(argValues.size() != argDecls.size())
+			throw std::runtime_error("Expected "+std::to_string(argDecls.size())+" arguments, got "+std::to_string(argValues.size()));
+
+		FunctionPassParamsVisitor passParams(*this);
+		
+		for(size_t i = 0; i < argValues.size(); i++) 
+			boost::apply_visitor(passParams, argDecls[i], argValues[i]);
+	}
+
 }
 
 

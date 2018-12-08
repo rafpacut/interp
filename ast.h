@@ -110,8 +110,9 @@ using boost::optional;
 
 	struct FunctionCall
 	{
+		using argVec = std::vector<x3::variant<Expr, std::string>>;
 		std::string name;
-		std::vector<x3::variant<Expr, std::string>> args; 
+		argVec args; 
 	};
 
         struct Statement : x3::variant<
@@ -134,9 +135,10 @@ using boost::optional;
 
 	struct FunctionDecl
 	{
+		using argDeclVec = std::vector<x3::variant<ArrDecl, VarDecl>>;
 		std::string type;
 		std::string name;
-		std::vector<x3::variant<ArrDecl, VarDecl>> args;
+		argDeclVec args;
 		std::list<Statement> body;
 	};
 
