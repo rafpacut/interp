@@ -2,6 +2,7 @@
 #include <iterator>
 #include <boost/optional/optional_io.hpp>
 #include "env.hpp"
+#include "astPrinter.h"
 
 namespace ast
 {
@@ -13,6 +14,7 @@ namespace ast
 			if(!skipStep)
 			{
 				std::cout<<"Environment:"<<std::endl;
+
 				std::for_each(e.scopes.crbegin(), e.scopes.crend(),
 						[this](Scope const& s)
 						{
@@ -21,6 +23,13 @@ namespace ast
 							std::cout<<'}'<<std::endl;
 						});
 
+				if(printFun)
+				{
+
+					std::cout<<"functions:\n";
+					for(const auto& f: e.functions)
+						astPrint(f);
+				}
 			}
 		}
 
@@ -43,26 +52,30 @@ namespace ast
 				else
 					std::cout<<"--"<<std::endl;
 			}
-			
-
 		}
 
 		void pollAction() 
 		{
 			char action =' ';
 			//
-			while(!skipStep && !(action == 's' || action == 'c'))
+			while(!skipStep && !(action == 's' || action == 'c' || action == 'p'))
 			{
-				std::cout<<"[s]tep, [c]ontinue?";
+				std::cout<<"[s]tep, [c]ontinue, [p]rint functions?";
 				std::cin>>action;
 
 				if(action == 'c')
 					skipStep = true;
 
+				if(action == 'p')
+					printFun = true;
+
+
 			}
 		}
 
+		bool printFun = false;
 		bool skipStep = false;
+		ast::Printer astPrint;
 	};
 }
 

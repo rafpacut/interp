@@ -72,18 +72,12 @@ namespace ast
 		std::cout<<"IF ";
 		(*this)(x.condition);
 		std::cout<<std::endl;
-		for(Statement const& stmt : x.tBody)
-		{
-			(*this)(stmt);
-		}
+		(*this)(x.tBody);
 
 		if(x.fBody)
 		{
 			std::cout<<"\n ELSE \n";
-			for(Statement const& stmt : (*x.fBody))
-			{
-				(*this)(stmt);
-			}
+			(*this)(*(x.fBody));
 		}
 	}
 
@@ -122,12 +116,8 @@ namespace ast
 	{
 		std::cout<<"While loop (";
 		(*this)(x.condition);
-		std::cout<<")\n{\n";
-		for(Statement const& stmt : x.body)
-		{
-			(*this)(stmt);
-		}
-		std::cout<<"\n}\n";
+		std::cout<<")\n";
+		(*this)(x.body);
 	}
 
 	void Printer::operator()(Statement const& x) const
@@ -147,7 +137,33 @@ namespace ast
 
 	void Printer::operator()(FunctionDecl const& x) const
 	{
-		std::cout<<"Function "<<x.name;
+		std::cout<<"Function declaration\n";
+		std::cout<<"name:"<<x.name;
+		std::cout<<"\nargs:\n";
+		for(const auto& a: x.args)
+			boost::apply_visitor(*this, a);
+
+		(*this)(x.body);
+	}
+
+	void Printer::operator()(FunctionCall const& x) const
+	{
+		std::cout<<"Function call\n";
+		std::cout<<x.name<<'(';
+		for(size_t i = 0; i < x.args.size(); ++i)
+			boost::apply_visitor(*this,x.args[i]);
+		std::cout<<")\n";
+
+	}
+
+	void Printer::operator()(std::list<Statement> const& x) const
+	{
+		std::cout<<"\n{\n";
+		for(Statement const& stmt : x)
+		{
+			(*this)(stmt);
+		}
+		std::cout<<"\n}\n";
 	}
 
 }

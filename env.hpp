@@ -38,16 +38,20 @@ namespace ast
 
 	struct Environment
 	{
+		using Function = FunctionDecl;
+
+
 		Environment();
+		Environment(const Environment& e);
 
 		template<typename T>
 		void declare(const std::string&, const optional<T>);
+		void declare(const Function&);
 
 		int getValue(const std::string&, optional<unsigned int> idx = boost::none) const;
 
 		template<typename T>
 		void assignValue(const std::string&, const T& value, optional<unsigned int> id = boost::none);
-
 		void copyValue(const std::string&, const std::string&);
 
 		void createScope();
@@ -55,6 +59,7 @@ namespace ast
 
 
 		std::list<Scope> scopes;
+		std::vector<Function> functions;
 	};
 
 
@@ -76,7 +81,7 @@ namespace ast
 			throw std::runtime_error("Cannot find variable with name "+name);
 
 
-		if(*idx)
+		if(idx)
 			res->assignValue(name, value, *idx);
 		else
 			res->assignValue(name, value);

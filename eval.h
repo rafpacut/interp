@@ -4,6 +4,7 @@
 #include <map>
 #include <iostream>
 #include <boost/optional.hpp>
+#include <stack>
 #include "ast.h"
 #include "env.hpp"
 #include "envPrinter.cpp"
@@ -22,7 +23,8 @@ namespace ast{
 		int operator()(VarDecl const& x);
 		int operator()(ArrDecl const& x);
 		int operator()(FunctionDecl const& x);
-		int operator()(ArrValue const& x) const;
+		int operator()(FunctionCall const& x);
+		int operator()(ArrValue const& x);
 		int operator()(Assignment const& x);
 		int operator()(CopyValue const& x);
 		int operator()(AssignmentArr const& x);
@@ -37,6 +39,8 @@ namespace ast{
 
 		Environment env;
 		envPrinter printEnv;
+
+		std::stack<Environment> callStack;
 	};
 }
 

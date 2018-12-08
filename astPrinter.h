@@ -20,6 +20,7 @@ namespace ast
 		void operator()(VarDecl const&) const;
 		void operator()(ArrDecl const&) const;
 		void operator()(FunctionDecl const&) const;
+		void operator()(FunctionCall const&) const;
 		void operator()(ArrValue const&) const;
 		void operator()(CopyValue const&) const;
 		void operator()(Assignment const&) const;
@@ -31,6 +32,7 @@ namespace ast
 		void operator()(Program const&) const;
 		void operator()(WhileLoop const&) const;
 		void operator()(Conditional const&) const;
+		void operator()(std::list<Statement> const&) const;
 	};
 }
 

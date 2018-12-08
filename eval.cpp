@@ -1,6 +1,7 @@
 #include "eval.h"
 #include <string>
 #include <iterator>
+#include "FParamPass.cpp"
 
 
 namespace ast{
@@ -172,11 +173,45 @@ namespace ast{
 
 	int Eval::operator()(FunctionDecl const& x)
 	{
+		env.declare(x);
 		return 0;
 	}
 
-    }
+	int Eval::operator()(const FunctionCall& x) 
+	{
+		//obtain called function
+		using Function = FunctionDecl;
+		std::string targetFName = x.name;
+		auto fIt = std::find_if(std::begin(env.functions), std::end(env.functions), 
+				[&targetFName](const Function& f){return f.name == targetFName;});
 
+		if(fIt == std::end(env.functions))
+			throw std::runtime_error("No function named "+x.name);
+
+		Function f = *fIt;
+
+		//create new environment
+		callStack.push(env);
+		env = Environment(env);
+
+		//Declare all arguments
+		if(x.args.size() != f.args.size())
+			throw std::runtime_error("Expected "+std::to_string(f.args.size())+" arguments, got "+std::to_string(x.args.size()));
+
+		//paramsVisitor -> passParams?
+		FunctionPassParamsVisitor paramsVisitor(*this);
+		
+		//I do trip up on 'f' and 'x'.
+		for(size_t i = 0; i < x.args.size(); i++) 
+			boost::apply_visitor(paramsVisitor, f.args[i], x.args[i]);
+
+
+		int state = (*this)(f.body); //for now. Later I'll implement special 'return' statement.
+		env = callStack.top();
+		callStack.pop();
+		return state;
+	}
+}
 
 
 

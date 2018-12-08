@@ -9,6 +9,11 @@ namespace ast
 		this->createScope();
 	}
 
+	Environment::Environment(const Environment& e) : functions(e.functions)
+	{
+		this->scopes.push_back(e.scopes.front());
+	}
+
 	int Environment::getValue(const std::string& name, optional<unsigned int> idx) const
 	{
 		auto res = std::find_if(scopes.crbegin(), scopes.crend(),

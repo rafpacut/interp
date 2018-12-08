@@ -21,6 +21,7 @@ using boost::optional;
 	struct Conditional;
 	struct ArrValue;
 	struct FunctionDecl;
+	struct FunctionCall;
 
         struct Operand : x3::variant<
               unsigned int
@@ -28,6 +29,7 @@ using boost::optional;
               , x3::forward_ast<Signed_>
               , x3::forward_ast<Expr>
 	      , x3::forward_ast<ArrValue>
+	      , x3::forward_ast<FunctionCall>
             >
         {
             using base_type::base_type;
@@ -61,12 +63,16 @@ using boost::optional;
 
 	struct Assignment
 	{
+		Assignment() = default;
+		Assignment(std::string name, Expr value) : name(name), value(value) {};
 		std::string name;
 		Expr value;
 	};
 
 	struct CopyValue
 	{
+		CopyValue() = default;
+		CopyValue(std::string to, std::string from) : to(to), from(from) {};
 		std::string to;
 		std::string from;
 	};
@@ -105,13 +111,14 @@ using boost::optional;
 	struct FunctionCall
 	{
 		std::string name;
-
+		std::vector<x3::variant<Expr, std::string>> args; 
 	};
 
         struct Statement : x3::variant<
 		VarDecl,
 		ArrDecl,
 		x3::forward_ast<FunctionDecl>,
+		FunctionCall,
 		Print,
 		CopyValue,
 		Assignment,
@@ -129,7 +136,7 @@ using boost::optional;
 	{
 		std::string type;
 		std::string name;
-		std::list<x3::variant<ArrDecl, VarDecl>> args;
+		std::vector<x3::variant<ArrDecl, VarDecl>> args;
 		std::list<Statement> body;
 	};
 
@@ -183,6 +190,10 @@ BOOST_FUSION_ADAPT_STRUCT(ast::ArrDecl,
 
 BOOST_FUSION_ADAPT_STRUCT(ast::FunctionDecl,
 	       	type, name, args, body
+		)
+
+BOOST_FUSION_ADAPT_STRUCT(ast::FunctionCall,
+	       	name, args
 		)
 
 BOOST_FUSION_ADAPT_STRUCT(ast::ArrValue, 
