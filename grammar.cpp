@@ -25,6 +25,7 @@ namespace grammar
 	x3::rule<class arrValue, ast::ArrValue> const arrValue("arrValue");
 	x3::rule<class functionDecl, ast::FunctionDecl> const functionDecl("functionDecl");
 	x3::rule<class functionCall, ast::FunctionCall> const functionCall("functionCall");
+	x3::rule<class returnStmt, ast::Return> const returnStmt("returnStmt");
 
 
 	const auto type_def
@@ -38,6 +39,9 @@ namespace grammar
 
 	const auto name_def 
 	= (x3::alpha >> *x3::alnum); 
+
+	const auto returnStmt_def
+	= x3::lit("return") >> (expression | name); //kinda doesn't make sense, but in future I'd like to return arrays
 
 	const auto varDecl_def
 	=  type >> name >> -('=' >> expression);
@@ -139,6 +143,7 @@ namespace grammar
 	    functionDecl
 	    | whileLoop
 	    | conditional
+	    | (returnStmt >> ';')
 	    | (varDecl >> ';')
 	    | (arrDecl >> ';')
 	    | (copyValue >> ';')
@@ -175,6 +180,7 @@ namespace grammar
 	  , conditional
 	  , statement
 	  , type
+	  , returnStmt
 	  , arrType
 	  , program
         );

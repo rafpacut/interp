@@ -135,6 +135,12 @@ namespace ast
             }
         }
 
+	void Printer::operator()(Return const& x) const
+	{
+		std::cout<<"return ";
+		apply_visitor(*this,x.value);
+	}
+
 	void Printer::operator()(FunctionDecl const& x) const
 	{
 		std::cout<<"Function declaration\n";
@@ -146,12 +152,26 @@ namespace ast
 		(*this)(x.body);
 	}
 
+
+	void Printer::operator()(FunctionBody const& x) const
+	{
+		std::cout<<"\n{\n";
+		for(auto const& stmt : x.b)
+		{
+			(*this)(stmt);
+		}
+		std::cout<<"\n}\n";
+	}
+
 	void Printer::operator()(FunctionCall const& x) const
 	{
 		std::cout<<"Function call\n";
 		std::cout<<x.name<<'(';
 		for(size_t i = 0; i < x.args.size(); ++i)
+		{
 			boost::apply_visitor(*this,x.args[i]);
+			std::cout<<", ";
+		}
 		std::cout<<")\n";
 
 	}

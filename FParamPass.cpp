@@ -7,13 +7,13 @@ namespace ast
 		public:
 			FunctionPassParamsVisitor(Eval& e) : eval(e) {};
 
-			void operator()(VarDecl& argDecl, const Expr& expr)
+			void operator()(const VarDecl& argDecl, const Expr& expr)
 			{
 				(eval)(argDecl);
 				(eval)(Assignment(argDecl.name, expr));
 			}
 
-			void operator()(VarDecl& argDecl, std::string varName)
+			void operator()(const VarDecl& argDecl, std::string varName)
 			{
 				(eval)(argDecl);
 				(eval)(CopyValue(argDecl.name, varName));

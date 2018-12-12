@@ -25,6 +25,22 @@ namespace ast
 		return res->getValue(name, idx);
 	}
 
+	void Environment::markReturnedValue(int value)
+	{
+		valToReturn = value;
+	}
+
+	void Environment::markReturnedValue(std::string name)
+	{
+		valToReturn = getValue(name);
+	}
+
+	int Environment::getReturnedValue()
+	{
+		return valToReturn;
+	}
+
+
 	void Environment::createScope()
 	{
 		scopes.push_back(Scope()); 

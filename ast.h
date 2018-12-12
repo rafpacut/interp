@@ -14,6 +14,7 @@ namespace ast {
 
 namespace x3 = boost::spirit::x3;
 using boost::optional;
+using boost::variant;
 
 	struct Signed_;
 	struct Expr;
@@ -22,6 +23,11 @@ using boost::optional;
 	struct ArrValue;
 	struct FunctionDecl;
 	struct FunctionCall;
+	struct ArrDecl;
+	struct VarDecl;
+
+	using argument = x3::variant<Expr, std::string>;
+	using argumentDecl = x3::variant<ArrDecl, VarDecl>;
 
         struct Operand : x3::variant<
               unsigned int
@@ -108,14 +114,19 @@ using boost::optional;
 	    //init list
 	};
 
+	struct Return
+	{
+		variant<Expr, std::string> value;
+	};
+
 	struct FunctionCall
 	{
-		using argVec = std::vector<x3::variant<Expr, std::string>>;
 		std::string name;
-		argVec args; 
+		std::vector<argument> args; 
 	};
 
         struct Statement : x3::variant<
+	        Return,
 		VarDecl,
 		ArrDecl,
 		x3::forward_ast<FunctionDecl>,
@@ -133,15 +144,19 @@ using boost::optional;
 		using base_type::operator=;
         };
 
+	struct FunctionBody 
+	{
+		std::vector<Statement> b; //stupid, but will work...
+	}; //kind-of-an alias for body to allow proper ADL function overload
+
 	struct FunctionDecl
 	{
-		using argDeclVec = std::vector<x3::variant<ArrDecl, VarDecl>>;
 		std::string type;
 		std::string name;
-		argDeclVec args;
-		std::list<Statement> body;
+		std::vector<argumentDecl> args;
+		FunctionBody body;
+		//std::list<Statement> body;
 	};
-
 
 	struct Conditional
 	{
@@ -169,6 +184,8 @@ BOOST_FUSION_ADAPT_STRUCT(ast::Signed_,
 BOOST_FUSION_ADAPT_STRUCT(ast::Operation,
     operator_, operand_
 )
+
+BOOST_FUSION_ADAPT_STRUCT(ast::Return, value)
 
 BOOST_FUSION_ADAPT_STRUCT(ast::Expr, 
 		first, rest

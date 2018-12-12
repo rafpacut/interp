@@ -2,10 +2,10 @@
 #include <string>
 #include <iterator>
 #include "FParamPass.cpp"
+#include "LambdaVisitor.hpp"
 
 
 namespace ast{
-
         int Eval::operator()(unsigned int n)  { return n; }
 	
 	int Eval::operator()(int n)  { return n; }
@@ -177,6 +177,35 @@ namespace ast{
 		return 0;
 	}
 
+	int Eval::operator()(Return const& x)
+	{
+		returnStatementEvald = true;
+		apply_visitor(LambdaVisitor(
+					[this](ast::Expr const& e)
+					{
+						int value = (*this)(e);
+						env.markReturnedValue(value);
+					},
+					[this](const std::string& varName)
+					{ env.markReturnedValue(varName); }
+				),
+				x.value);
+
+		return 0;
+	}
+
+	int Eval::operator()(FunctionBody& body)
+	{
+		for(auto& stmt: body.b)
+		{
+			(*this)(stmt);
+			if(returnStatementEvald) break;
+		}
+
+		returnStatementEvald = false;
+		return 0;
+	}
+
 	int Eval::operator()(const FunctionCall& x) 
 	{
 		FunctionDecl f = getFunction(x.name);
@@ -184,11 +213,24 @@ namespace ast{
 		callStack.push(env); 
 		env = Environment(env);
 
+		std::cout<<"before pass parameters\n";
 		passParameters(f.args, x.args);
+		std::cout<<"after pass parameters\n";
 
-		int state = (*this)(f.body); //Until 'return'
+		(*this)(f.body); 
+
+		//what if there was no return? Throw in env...
+		std::cout<<"before return retrieval\n";
+		int state = env.getReturnedValue();
+		std::cout<<"after return retrieval\n";
+
 		env = callStack.top();
 		callStack.pop();
+
+		//uh-oh: no can do! FunctionCall can either
+		// return array and be a part of arrayAssignment, or
+		// return an int
+
 		return state;
 	}
 
@@ -203,7 +245,7 @@ namespace ast{
 		return *fIt;
 	}
 
-	void Eval::passParameters(FunctionDecl::argDeclVec argDecls, FunctionCall::argVec argValues)
+	void Eval::passParameters(const std::vector<ast::argumentDecl>& argDecls, const std::vector<ast::argument>& argValues)
 	{
 		if(argValues.size() != argDecls.size())
 			throw std::runtime_error("Expected "+std::to_string(argDecls.size())+" arguments, got "+std::to_string(argValues.size()));

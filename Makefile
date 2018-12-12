@@ -1,6 +1,6 @@
 CXX = g++-7
 ROOT_BOOST = /opt/boost_1_66_0
-CXXFLAGS = -Wall -Wextra -std=c++14 -I $(ROOT_BOOST) 
+CXXFLAGS = -Wall -Wextra -std=c++17 -I $(ROOT_BOOST) 
 DEBUGFLAGS = -g3 -O0
 .PHONY: clean
 

@@ -24,6 +24,8 @@ namespace ast{
 		int operator()(ArrDecl const& x);
 		int operator()(FunctionDecl const& x);
 		int operator()(FunctionCall const& x);
+		int operator()(FunctionBody& body);
+		int operator()(Return const& x);
 		int operator()(ArrValue const& x);
 		int operator()(Assignment const& x);
 		int operator()(CopyValue const& x);
@@ -39,8 +41,9 @@ namespace ast{
 
 
 		FunctionDecl getFunction(std::string fName);
-		void passParameters(FunctionDecl::argDeclVec argDecls, FunctionCall::argVec argValues);
+		void passParameters(const std::vector<ast::argumentDecl>& argDecls, const std::vector<ast::argument>& argValues);
 
+		bool returnStatementEvald = false;
 
 		Environment env;
 		envPrinter printEnv;

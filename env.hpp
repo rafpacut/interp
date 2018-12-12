@@ -50,6 +50,10 @@ namespace ast
 
 		int getValue(const std::string&, optional<unsigned int> idx = boost::none) const;
 
+		void markReturnedValue(int);
+		void markReturnedValue(std::string);
+		int getReturnedValue();
+
 		template<typename T>
 		void assignValue(const std::string&, const T& value, optional<unsigned int> id = boost::none);
 		void copyValue(const std::string&, const std::string&);
@@ -57,6 +61,8 @@ namespace ast
 		void createScope();
 		void deleteScope();
 
+		//retValType valToReturn;
+		int valToReturn;
 
 		std::list<Scope> scopes;
 		std::vector<Function> functions;
