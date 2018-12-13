@@ -216,7 +216,7 @@ namespace ast{
 
 		passParameters(f.args, x.args);
 
-		processFBody(x.body);
+		processFBody(f.body);
 
 		//what if there was no return? Throw in env...
 		int state = env.getReturnedValue();

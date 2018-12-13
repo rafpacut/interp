@@ -24,7 +24,6 @@ namespace ast{
 		int operator()(ArrDecl const& x);
 		int operator()(FunctionDecl const& x);
 		int operator()(FunctionCall const& x);
-		//int operator()(FunctionBody& body);
 		int operator()(Return const& x);
 		int operator()(ArrValue const& x);
 		int operator()(Assignment const& x);
@@ -40,6 +39,7 @@ namespace ast{
 		int operator()(std::list<Statement> const& x);
 
 
+		int processFBody(std::list<Statement>);
 		FunctionDecl getFunction(std::string fName);
 		void passParameters(const std::vector<ast::argumentDecl>& argDecls, const std::vector<ast::argument>& argValues);
 
