@@ -43,7 +43,7 @@ namespace ast
 	void Printer::operator()(Print const& x) const
 	{
 		std::cout<<"Print ";
-		boost::apply_visitor(*this, x.val);
+		(*this)(x.val);
 		std::cout<<std::endl;
 	}
 

@@ -12,6 +12,7 @@ namespace ast
 	Environment::Environment(const Environment& e) : functions(e.functions)
 	{
 		this->scopes.push_back(e.scopes.front());
+		this->createScope();
 	}
 
 	int Environment::getValue(const std::string& name, optional<unsigned int> idx) const

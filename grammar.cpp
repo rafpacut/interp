@@ -47,7 +47,7 @@ namespace grammar
 	=  type >> name >> -('=' >> expression);
 
 	const auto arrDecl_def
-	= arrType >> name; //>> -('=' >> ?init list?);
+	= arrType >> name; //>> -('=' >> '{' >> x3::int_ % ',' >> '}';
 	
 	const auto functionDecl_def
 	= type >> name >> '(' >> (varDecl | arrDecl) % ',' >> ')'
@@ -74,11 +74,7 @@ namespace grammar
 
 	const auto print_def
 	=   x3::lit("print(") 
-	    >>(
-	        x3::uint_
-	      | arrValue
-	      | name 
-	      )
+	    >> expression
 	    >> x3::lit(")")
 	;
 
@@ -100,9 +96,9 @@ namespace grammar
         const auto factor_def 
         =
 	        x3::uint_
+	    |   functionCall
             |   arrValue
             |   name		
-	    |   functionCall
             |   ('(' > expression > ')')
             |   (char_('-') > factor)
             |   (char_('+') > factor)
@@ -148,10 +144,10 @@ namespace grammar
 	    | (arrDecl >> ';')
 	    | (copyValue >> ';')
 	    | (assignment >> ';')
+	    | (print >> ';')
 	    | (functionCall >> ';')
 	    | (assignmentArr >> ';')
 	    | (expression >> ';')
-	    | (print >> ';')
 	    ;
 
 

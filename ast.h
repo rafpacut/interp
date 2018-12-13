@@ -97,7 +97,7 @@ using boost::variant;
 
 	struct Print 
 	{
-		boost::variant<std::string, unsigned int, ArrValue> val;
+		Expr val;
 	};
 
 	struct VarDecl

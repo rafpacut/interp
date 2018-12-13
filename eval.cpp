@@ -61,7 +61,7 @@ namespace ast{
 
 	int Eval::operator()(Print const& x) 
 	{
-		int val = boost::apply_visitor(*this, x.val);
+		int val = (*this)(x.val);
 		std::cout<<val<<std::endl;
 
 		return 0;
