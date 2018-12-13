@@ -194,9 +194,9 @@ namespace ast{
 		return 0;
 	}
 
-	int Eval::operator()(FunctionBody& body)
+	int Eval::processFBody(std::list<Statement> body)
 	{
-		for(auto& stmt: body.b)
+		for(auto& stmt: body)
 		{
 			(*this)(stmt);
 			if(returnStatementEvald) break;
@@ -206,6 +206,7 @@ namespace ast{
 		return 0;
 	}
 
+
 	int Eval::operator()(const FunctionCall& x) 
 	{
 		FunctionDecl f = getFunction(x.name);
@@ -213,16 +214,12 @@ namespace ast{
 		callStack.push(env); 
 		env = Environment(env);
 
-		std::cout<<"before pass parameters\n";
 		passParameters(f.args, x.args);
-		std::cout<<"after pass parameters\n";
 
-		(*this)(f.body); 
+		processFBody(x.body);
 
 		//what if there was no return? Throw in env...
-		std::cout<<"before return retrieval\n";
 		int state = env.getReturnedValue();
-		std::cout<<"after return retrieval\n";
 
 		env = callStack.top();
 		callStack.pop();

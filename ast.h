@@ -144,18 +144,12 @@ using boost::variant;
 		using base_type::operator=;
         };
 
-	struct FunctionBody 
-	{
-		std::vector<Statement> b; //stupid, but will work...
-	}; //kind-of-an alias for body to allow proper ADL function overload
-
 	struct FunctionDecl
 	{
 		std::string type;
 		std::string name;
 		std::vector<argumentDecl> args;
-		FunctionBody body;
-		//std::list<Statement> body;
+		std::list<Statement> body;
 	};
 
 	struct Conditional

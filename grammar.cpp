@@ -51,7 +51,7 @@ namespace grammar
 	
 	const auto functionDecl_def
 	= type >> name >> '(' >> (varDecl | arrDecl) % ',' >> ')'
-	  >> codeBlock
+	  >>codeBlock 
 	  ;
 
 	const auto functionCall_def

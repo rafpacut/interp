@@ -152,17 +152,6 @@ namespace ast
 		(*this)(x.body);
 	}
 
-
-	void Printer::operator()(FunctionBody const& x) const
-	{
-		std::cout<<"\n{\n";
-		for(auto const& stmt : x.b)
-		{
-			(*this)(stmt);
-		}
-		std::cout<<"\n}\n";
-	}
-
 	void Printer::operator()(FunctionCall const& x) const
 	{
 		std::cout<<"Function call\n";
