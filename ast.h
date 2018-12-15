@@ -63,7 +63,7 @@ using boost::variant;
 	struct Comparison
 	{
 		Expr lhs;
-		char op;
+		std::string op;
 		Expr rhs;
 	};
 

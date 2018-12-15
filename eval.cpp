@@ -45,12 +45,21 @@ namespace ast{
 	{
 		int lhs = (*this)(x.lhs);
 		int rhs = (*this)(x.rhs);
-		switch (x.op)
-		{
-			case '<': return lhs < rhs;
-			case '>': return lhs > rhs;
-		}
-		return 0;
+
+		if(x.op == "<")
+			return lhs < rhs;
+		if(x.op == "<=")
+			return lhs <= rhs;
+		if(x.op == ">")
+			return lhs > rhs;
+		if(x.op == ">=")
+			return lhs >= rhs;
+		if(x.op == "==")
+			return lhs == rhs;
+		if(x.op == "!=")
+			return lhs != rhs;
+
+		throw std::runtime_error("Expected logical comparison operator, got " + x.op);
 	}
 
 	int Eval::operator()(ArrValue const& x) 

@@ -115,7 +115,14 @@ namespace grammar
 	const auto comparison_def
 	=
 	    expression 
-	    >> (char_('<') | char_('>')) 
+	    >> (
+	        string("<=")
+	      | string(">=")
+	      | string("<")
+	      | string(">")
+	      | string("==")
+	      | string("!=")
+	      ) 
 	    >> expression
 	    ;
 
