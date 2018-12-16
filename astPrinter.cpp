@@ -139,6 +139,7 @@ namespace ast
 	{
 		std::cout<<"return ";
 		apply_visitor(*this,x.value);
+		std::cout<<std::endl;
 	}
 
 	void Printer::operator()(FunctionDecl const& x) const
