@@ -156,9 +156,9 @@ namespace ast
 	{
 		std::cout<<"Function call\n";
 		std::cout<<x.name<<'(';
-		for(size_t i = 0; i < x.args.size(); ++i)
+		for(size_t i = 0; i < x.params.size(); ++i)
 		{
-			boost::apply_visitor(*this,x.args[i]);
+			boost::apply_visitor(*this,x.params[i]);
 			std::cout<<", ";
 		}
 		std::cout<<")\n";

@@ -26,8 +26,8 @@ using boost::variant;
 	struct ArrDecl;
 	struct VarDecl;
 
-	using argument = x3::variant<Expr, std::string>;
-	using argumentDecl = x3::variant<ArrDecl, VarDecl>;
+	using param = x3::variant<Expr, std::string>;
+	using argument = x3::variant<ArrDecl, VarDecl>;
 
         struct Operand : x3::variant<
               unsigned int
@@ -69,8 +69,6 @@ using boost::variant;
 
 	struct Assignment
 	{
-		Assignment() = default;
-		Assignment(std::string name, Expr value) : name(name), value(value) {};
 		std::string name;
 		Expr value;
 	};
@@ -122,7 +120,7 @@ using boost::variant;
 	struct FunctionCall
 	{
 		std::string name;
-		std::vector<argument> args; 
+		std::vector<param> params; 
 	};
 
         struct Statement : x3::variant<
@@ -148,7 +146,7 @@ using boost::variant;
 	{
 		std::string type;
 		std::string name;
-		std::vector<argumentDecl> args;
+		std::vector<argument> args;
 		std::list<Statement> body;
 	};
 
@@ -206,7 +204,7 @@ BOOST_FUSION_ADAPT_STRUCT(ast::FunctionDecl,
 		)
 
 BOOST_FUSION_ADAPT_STRUCT(ast::FunctionCall,
-	       	name, args
+	       	name, params 
 		)
 
 BOOST_FUSION_ADAPT_STRUCT(ast::ArrValue, 

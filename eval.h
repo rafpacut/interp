@@ -41,12 +41,13 @@ namespace ast{
 
 		int processFBody(std::list<Statement>);
 		FunctionDecl getFunction(std::string fName);
-		void passParameters(const std::vector<ast::argumentDecl>& argDecls, const std::vector<ast::argument>& argValues);
+		void passParameters(const std::vector<ast::argument>& argDecls, const std::vector<int>& argValues);
 
 		bool returnStatementEvald = false;
 
 		Environment env;
 		envPrinter printEnv;
+		Printer printAST;
 
 		std::stack<Environment> callStack;
 	};

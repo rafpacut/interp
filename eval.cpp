@@ -1,7 +1,6 @@
 #include "eval.h"
 #include <string>
 #include <iterator>
-#include "FParamPass.cpp"
 #include "LambdaVisitor.hpp"
 
 
@@ -144,9 +143,8 @@ namespace ast{
 		value = boost::apply_visitor(*this, x.first);
 
 		for(const Operation& o: x.rest)
-		{
 			value = (*this)(o, value);
-		}
+
 		return value;
 	}
 
@@ -163,9 +161,12 @@ namespace ast{
 
 	int Eval::operator()(Statement const& x) 
 	{
+		printAST(x);
+		printEnv(env);
+
 		int value = 0;
 		value = boost::apply_visitor(*this, x);
-		printEnv(env);
+
 		return value;
 	}
 
@@ -205,13 +206,13 @@ namespace ast{
 
 	int Eval::processFBody(std::list<Statement> body)
 	{
+		returnStatementEvald = false;
 		for(auto& stmt: body)
 		{
 			(*this)(stmt);
 			if(returnStatementEvald) break;
 		}
 
-		returnStatementEvald = false;
 		return 0;
 	}
 
@@ -220,10 +221,16 @@ namespace ast{
 	{
 		FunctionDecl f = getFunction(x.name);
 
+		std::vector<int> paramVals;
+		paramVals.reserve(x.params.size());
+		std::transform(x.params.begin(), x.params.end(), std::back_inserter(paramVals),
+				[this](ast::param a) -> int { return boost::apply_visitor(*this,a);});
+
+
 		callStack.push(env); 
 		env = Environment(env);
 
-		passParameters(f.args, x.args);
+		passParameters(f.args, paramVals);
 
 		processFBody(f.body);
 
@@ -232,10 +239,6 @@ namespace ast{
 
 		env = callStack.top();
 		callStack.pop();
-
-		//uh-oh: no can do! FunctionCall can either
-		// return array and be a part of arrayAssignment, or
-		// return an int
 
 		return state;
 	}
@@ -251,15 +254,25 @@ namespace ast{
 		return *fIt;
 	}
 
-	void Eval::passParameters(const std::vector<ast::argumentDecl>& argDecls, const std::vector<ast::argument>& argValues)
+	void Eval::passParameters(const std::vector<ast::argument>& argDecls, const std::vector<int>& params)
 	{
-		if(argValues.size() != argDecls.size())
-			throw std::runtime_error("Expected "+std::to_string(argDecls.size())+" arguments, got "+std::to_string(argValues.size()));
+		if(params.size() != argDecls.size())
+			throw std::runtime_error("Expected "+std::to_string(argDecls.size())+" arguments, got "+std::to_string(params.size()));
 
-		FunctionPassParamsVisitor passParams(*this);
-		
-		for(size_t i = 0; i < argValues.size(); i++) 
-			boost::apply_visitor(passParams, argDecls[i], argValues[i]);
+		for(size_t i = 0; i < argDecls.size(); i++) 
+		{
+			boost::apply_visitor(LambdaVisitor(
+						[this, &params, i](const VarDecl& a)
+						{
+							(*this)(a);
+							this->env.assignValue(a.name, params[i]);
+						},
+						[](const ArrDecl&)
+						{
+							throw std::runtime_error("array passing not yet implemented");
+						}),
+					argDecls[i]);
+		}
 	}
 
 }
