@@ -5,6 +5,7 @@
 #include <fstream>
 #include <string>
 
+#include "cmdArgumentProcessor.cpp"
 #include "env.hpp"
 #include "astPrinter.h"
 #include "eval.h"
@@ -13,21 +14,23 @@
 namespace x3 = boost::spirit::x3;
 using namespace x3;
 
-int main(int argc, char **argv) {
+int main(int argc, char **argv) 
+{
+	auto [filePath, runInteractive, debug] = cmdArgProcessor::process(argc, argv);
 
     auto &parser = grammar::program;
     ast::Program program; 
     ast::Printer print;
-    ast::Eval eval;
+    ast::Eval eval(debug);
 
     using It = std::string::const_iterator;
-
     std::string str;
 
-    if(argc > 1 && argc < 3)
+
+    if(!runInteractive) 
     {
-	//read the file
-	   std::ifstream in(argv[1], std::ios::in | std::ios::binary);
+	   //read the file
+	   std::ifstream in(filePath, std::ios::in | std::ios::binary);
 	   str = std::string((std::istreambuf_iterator<char>(in)), std::istreambuf_iterator<char>());
 
 	   //process
@@ -74,7 +77,7 @@ int main(int argc, char **argv) {
 		       	continue;
 
 		It iter = str.begin(), end = str.end();
-		if (phrase_parse(iter, end, parser, x3::space, program)) 
+		if(phrase_parse(iter, end, parser, (x3::space| x3::eol), program))
 		{
 		    std::cout << "Parsing succeeded\n";
 		    print(program);

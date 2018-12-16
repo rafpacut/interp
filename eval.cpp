@@ -161,8 +161,11 @@ namespace ast{
 
 	int Eval::operator()(Statement const& x) 
 	{
-		printAST(x);
-		printEnv(env);
+		if(debugOn)
+		{
+			printAST(x);
+			printEnv(env);
+		}
 
 		int value = 0;
 		value = boost::apply_visitor(*this, x);
@@ -215,7 +218,6 @@ namespace ast{
 
 		return 0;
 	}
-
 
 	int Eval::operator()(const FunctionCall& x) 
 	{

@@ -15,6 +15,9 @@ namespace ast{
 
 	struct Eval
 	{
+		Eval() = default;
+		Eval(bool debug) : debugOn(debug) {};
+
 		int operator()(unsigned int n);
 		int operator()(int n) ;
 		int operator()(std::string s);
@@ -45,10 +48,11 @@ namespace ast{
 
 		bool returnStatementEvald = false;
 
-		Environment env;
+		bool debugOn = false;
 		envPrinter printEnv;
 		Printer printAST;
 
+		Environment env;
 		std::stack<Environment> callStack;
 	};
 }
