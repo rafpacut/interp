@@ -30,8 +30,7 @@ namespace cmdArgProcessor
 		bool debug = false;
 		char* filePath;
 
-		if(argc == 1)//fire up interactive interpreter
-			runInteractive = true;
+		//if argc == 1 fire up interactive interpreter -- the default
 		if(argc == 2)//either 1) with debug or run non-interactive
 		{
 			if(isDebugFlag(argv[1]))
