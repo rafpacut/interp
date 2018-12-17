@@ -1,4 +1,5 @@
 #include "env.hpp"
+#include "TypeChecker.cpp"
 #include <algorithm>
 #include <iterator>
 
@@ -67,24 +68,13 @@ namespace ast
 		if(toScopeIt == scopes.rend())
 			throw std::runtime_error("Cannot find variable with name "+toName);
 
-	      auto& toInts = toScopeIt->ints;
-	      auto& fromInts = fromScopeIt->ints;
-	
-	      auto& fromIntVecs = fromScopeIt->intVecs;
-	      auto& toIntVecs = toScopeIt->intVecs;
-	
-	      //If are both ints
-	      if(toInts.find(toName) != toInts.end() && fromInts.find(fromName) != fromInts.end())
-	      {
-	      	toScopeIt->ints.at(toName) = fromScopeIt->ints.at(fromName);
-	      }
-	      //if are both vectors
-	      else if(toIntVecs.find(toName) != toIntVecs.end() && fromIntVecs.find(fromName) != fromIntVecs.end())
-	      {
-	      	toScopeIt->intVecs.at(toName) = fromScopeIt->intVecs.at(fromName);
-	      }
-	      else
-	      	throw std::runtime_error("Cross-type assignment");
+		TypeChecker tc(toScopeIt, fromScopeIt);
+		if(tc.areBothInts(fromName, toName))
+			toScopeIt->ints.at(toName) = fromScopeIt->ints.at(fromName);
+		else if(tc.areBothIntVecs(fromName, toName))
+			toScopeIt->intVecs.at(toName) = fromScopeIt->intVecs.at(fromName);
+		else
+	      		throw std::runtime_error("Cross-type assignment");
 	}
 
 	void Environment::declare(const Function& fun)
