@@ -16,7 +16,7 @@ namespace ast
 	struct Scope
 	{
 		template<typename T>
-		void declare(const std::string&, const optional<T>);
+		void declare(const std::string&, const T);
 
 		int getValue(const std::string&, const optional<unsigned int> = boost::none) const;
 
@@ -45,14 +45,17 @@ namespace ast
 		Environment(const Environment& e);
 
 		template<typename T>
-		void declare(const std::string&, const optional<T>);
+		void declare(const std::string&, const T);
 		void declare(const Function&);
 
 		int getValue(const std::string&, optional<unsigned int> idx = boost::none) const;
 
 		void markReturnedValue(int);
 		void markReturnedValue(std::string);
-		int getReturnedValue();
+		void markReturnedValue(std::vector<int> vec);
+
+		void getReturn(int&);
+		void getReturn(std::vector<int>& a);
 
 		template<typename T>
 		void assignValue(const std::string&, const T& value, optional<unsigned int> id = boost::none);
@@ -61,8 +64,9 @@ namespace ast
 		void createScope();
 		void deleteScope();
 
-		//retValType valToReturn;
-		int valToReturn;
+		std::string stringReturn;
+		int intReturn;
+		std::vector<int> arrayReturn;
 
 		std::list<Scope> scopes;
 		std::vector<Function> functions;
@@ -70,7 +74,7 @@ namespace ast
 
 
 	template<typename T>
-	void Environment::declare(const std::string& name, const optional<T> value)
+	void Environment::declare(const std::string& name, const T value)
 	{
 		scopes.back().declare(name, value);
 	}
@@ -94,7 +98,7 @@ namespace ast
 	}
 
 	template<typename T>
-	void Scope::declare(const std::string& name, const optional<T> value)
+	void Scope::declare(const std::string& name, const T value)
 	{
 		if(!hasVariable(name))
 		{

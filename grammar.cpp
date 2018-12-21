@@ -41,13 +41,14 @@ namespace grammar
 	= (x3::alpha >> *x3::alnum); 
 
 	const auto returnStmt_def
-	= x3::lit("return") >> (expression | name); //kinda doesn't make sense, but in future I'd like to return arrays
+	= x3::lit("return") >> (name | expression); //kinda doesn't make sense, but in future I'd like to return arrays
 
 	const auto varDecl_def
 	=  type >> name >> -('=' >> expression);
 
 	const auto arrDecl_def
-	= arrType >> name; //>> -('=' >> '{' >> x3::int_ % ',' >> '}';
+	= arrType >> name >> -('=' >> (functionCall | name));
+	//>> -('=' >> '{' >> x3::int_ % ',' >> '}';
 	
 	const auto functionDecl_def
 	= type >> name >> '(' >> (varDecl | arrDecl) % ',' >> ')'

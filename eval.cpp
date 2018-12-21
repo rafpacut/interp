@@ -80,6 +80,7 @@ namespace ast{
 		optional<int> value = boost::none;
 		if(x.value)
 			value = (*this)(*(x.value));
+
 		env.declare(x.name, value);
 
 		return 0;
@@ -87,7 +88,26 @@ namespace ast{
 
 	int Eval::operator()(ArrDecl const& x)
 	{
-		env.declare(x.name, optional<std::vector<int>>(boost::none));
+		if(x.initValue)
+		{
+			apply_visitor(LambdaVisitor(
+						[this, &x](const FunctionCall& fCall) 
+						{
+							std::vector<int> val;
+							(*this)(fCall);
+							env.getReturn(val);
+							env.declare(x.name, val);
+						},
+						[this, &x](const std::string& name)
+						{
+							env.declare(x.name, optional<std::vector<int>>(boost::none));
+							(*this)(CopyValue(x.name, name));
+						}),
+						*x.initValue);
+		}
+		else
+			env.declare(x.name, optional<std::vector<int>>(boost::none));
+
 		return 0;
 	}
 
@@ -194,13 +214,13 @@ namespace ast{
 	{
 		returnStatementEvald = true;
 		apply_visitor(LambdaVisitor(
+					[this](const std::string& varName)
+					{ env.markReturnedValue(varName); },
 					[this](ast::Expr const& e)
 					{
 						int value = (*this)(e);
 						env.markReturnedValue(value);
-					},
-					[this](const std::string& varName)
-					{ env.markReturnedValue(varName); }
+					}
 				),
 				x.value);
 
@@ -224,9 +244,11 @@ namespace ast{
 		FunctionDecl f = getFunction(x.name);
 
 		std::vector<int> paramVals;
-		paramVals.reserve(x.params.size());
 		std::transform(x.params.begin(), x.params.end(), std::back_inserter(paramVals),
-				[this](ast::param a) -> int { return boost::apply_visitor(*this,a);});
+				[this](ast::param a) -> int 
+				{
+					return boost::apply_visitor(*this,a);
+				});
 
 
 		callStack.push(env); 
@@ -236,11 +258,20 @@ namespace ast{
 
 		processFBody(f.body);
 
+		//GET returned values from Environment
+		//--------------------------------------------------
 		//what if there was no return? Throw in env...
-		int state = env.getReturnedValue();
+		int state;
+	        env.getReturn(state);
 
+		std::vector<int> retValue;
+		env.getReturn(retValue);
+
+		//Remove function Environment and use old one.
 		env = callStack.top();
 		callStack.pop();
+
+		env.markReturnedValue(retValue);
 
 		return state;
 	}

@@ -105,13 +105,6 @@ using boost::variant;
 	    optional<Expr> value;
 	};
 
-	struct ArrDecl
-	{
-            std::string type;
-            std::string name;
-	    //init list
-	};
-
 	struct Return
 	{
 		variant<Expr, std::string> value;
@@ -121,6 +114,14 @@ using boost::variant;
 	{
 		std::string name;
 		std::vector<param> params; 
+	};
+
+	struct ArrDecl
+	{
+            std::string type;
+            std::string name;
+	    optional<variant<FunctionCall, std::string>> initValue;
+	    //init list
 	};
 
         struct Statement : x3::variant<
@@ -166,7 +167,6 @@ using boost::variant;
 	struct Program {
 	    std::list<Statement> stmts; 
 	};
-
 } 
 
 BOOST_FUSION_ADAPT_STRUCT(ast::Signed_,
@@ -196,7 +196,7 @@ BOOST_FUSION_ADAPT_STRUCT(ast::VarDecl,
 		)
 	
 BOOST_FUSION_ADAPT_STRUCT(ast::ArrDecl, 
-		type, name
+		type, name, initValue
 		)
 
 BOOST_FUSION_ADAPT_STRUCT(ast::FunctionDecl,

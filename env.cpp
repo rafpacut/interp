@@ -27,19 +27,48 @@ namespace ast
 		return res->getValue(name, idx);
 	}
 
-	void Environment::markReturnedValue(int value)
+	void Environment::getReturn(int& a)
 	{
-		valToReturn = value;
+		a = intReturn;	
+	}
+
+	void Environment::getReturn(std::vector<int>& a)
+	{
+		a = arrayReturn;
+	}
+
+	void Environment::markReturnedValue(int r)
+	{
+		intReturn = r;
+	}
+
+	void Environment::markReturnedValue(std::vector<int> vec)
+	{
+		arrayReturn = vec;
 	}
 
 	void Environment::markReturnedValue(std::string name)
 	{
-		valToReturn = getValue(name);
-	}
+		auto scopeIt = std::find_if(scopes.rbegin(), scopes.rend(),
+				[&name](Scope const& s){ return s.hasVariable(name);});
+		if(scopeIt == scopes.rend())
+			throw std::runtime_error("Cannot find variable with name "+name);
 
-	int Environment::getReturnedValue()
-	{
-		return valToReturn;
+		if(scopeIt->ints.find(name) != std::end(scopeIt->ints))
+		{
+			optional<int> var = scopeIt->ints.at(name);
+			if(!var) throw std::runtime_error("Returned value has to be initialized");
+			intReturn = *var;
+
+		}
+		else if(scopeIt->intVecs.find(name) != std::end(scopeIt->intVecs))
+		{
+			optional<std::vector<int>>& vec = scopeIt->intVecs.at(name);
+			if(!vec) throw std::runtime_error("Returned value has to be initialized");
+			arrayReturn = *vec;
+		}
+		else
+			throw std::runtime_error(name+" is undeclared");
 	}
 
 
@@ -81,7 +110,6 @@ namespace ast
 	{
 		functions.push_back(fun);
 	}
-
 
 	int Scope::getValue(const std::string& name, const optional<unsigned int> idx) const
 	{
