@@ -4,10 +4,10 @@ CXXFLAGS = -Wall -Wextra -std=c++17 -I $(ROOT_BOOST)
 DEBUGFLAGS = -g3 -O0
 .PHONY: clean
 
-build: 
+rebuild: 
 	$(CXX) $(CXXFLAGS) env.o eval.o astPrinter.o envPrinter.o main.cpp -o interp.a -lstdc++fs
 
-rebuild: astPrinter eval env envPrinter
+build: astPrinter eval env envPrinter
 	$(CXX) $(CXXFLAGS) env.o eval.o astPrinter.o envPrinter.o main.cpp -o interp.a -lstdc++fs
 
 astPrinter:
