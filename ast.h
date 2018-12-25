@@ -27,7 +27,6 @@ using boost::variant;
 	struct VarDecl;
 
 	using param = x3::variant<Expr, std::string>;
-	using simpleParam = x3::variant<int, std::vector<int>>; //resolvedParam? evaluatedParam? paramValues?
 	using argument = x3::variant<ArrDecl, VarDecl>;
 	using basicType = variant<int,std::vector<int>>;
 
@@ -77,8 +76,6 @@ using boost::variant;
 
 	struct CopyValue
 	{
-		CopyValue() = default;
-		CopyValue(std::string to, std::string from) : to(to), from(from) {};
 		std::string to;
 		std::string from;
 	};

@@ -47,12 +47,11 @@ namespace ast{
 		basicType processFBody(std::list<Statement>);
 		FunctionDecl getFunction(std::string fName);
 		void passParameters(std::vector<ast::argument>& argDecls, std::vector<basicType>& argValues);
-		//void passParameters(std::vector<ast::argument>& argDecls, std::vector<simpleParam>& argValues);
-		std::vector<simpleParam> resolveParams(std::vector<param> params);
 
 		bool returnStatementEvald = false;
-
 		bool debugOn = false;
+
+
 		envPrinter printEnv;
 		Printer printAST;
 
