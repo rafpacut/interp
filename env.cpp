@@ -1,5 +1,4 @@
 #include "env.hpp"
-#include "TypeChecker.cpp"
 #include <algorithm>
 #include <iterator>
 
@@ -37,28 +36,6 @@ namespace ast
 		if(scopes.size() == 1)
 			throw std::runtime_error("Global scope cannot be deleted.");
 		scopes.pop_back();
-	}
-
-	void Environment::copyValue(const std::string& fromName, const std::string& toName)
-	{
-		auto fromScopeIt = std::find_if(scopes.crbegin(), scopes.crend(),
-				[&fromName](Scope const& s){ return s.hasVariable(fromName);});
-
-		auto toScopeIt = std::find_if(scopes.rbegin(), scopes.rend(),
-				[&toName](Scope const& s){ return s.hasVariable(toName);});
-
-		if(fromScopeIt == scopes.rend())
-			throw std::runtime_error("Cannot find variable with name "+fromName);
-		if(toScopeIt == scopes.rend())
-			throw std::runtime_error("Cannot find variable with name "+toName);
-
-		TypeChecker tc(toScopeIt, fromScopeIt);
-		if(tc.areBothInts(fromName, toName))
-			toScopeIt->ints.at(toName) = fromScopeIt->ints.at(fromName);
-		else if(tc.areBothIntVecs(fromName, toName))
-			toScopeIt->intVecs.at(toName) = fromScopeIt->intVecs.at(fromName);
-		else
-	      		throw std::runtime_error("Cross-type assignment");
 	}
 
 	void Environment::declare(const Function& fun)

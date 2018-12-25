@@ -23,7 +23,6 @@ namespace ast
 		void operator()(FunctionCall const&) const;
 		void operator()(Return const&) const;
 		void operator()(ArrValue const&) const;
-		void operator()(CopyValue const&) const;
 		void operator()(Assignment const&) const;
 		void operator()(AssignmentArr const&) const;
 		void operator()(Print const&) const;

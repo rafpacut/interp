@@ -74,12 +74,6 @@ using boost::variant;
 		Expr value;
 	};
 
-	struct CopyValue
-	{
-		std::string to;
-		std::string from;
-	};
-
 	struct ArrValue
 	{
 		std::string name;
@@ -129,7 +123,6 @@ using boost::variant;
 		x3::forward_ast<FunctionDecl>,
 		FunctionCall,
 		Print,
-		CopyValue,
 		Assignment,
 		AssignmentArr,
 		x3::forward_ast<WhileLoop>,
@@ -215,10 +208,6 @@ BOOST_FUSION_ADAPT_STRUCT(ast::Conditional,
 
 BOOST_FUSION_ADAPT_STRUCT(ast::Assignment, 
 		name, value
-		)
-
-BOOST_FUSION_ADAPT_STRUCT(ast::CopyValue, 
-		to, from
 		)
 
 BOOST_FUSION_ADAPT_STRUCT(ast::AssignmentArr, 

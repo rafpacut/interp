@@ -32,7 +32,6 @@ namespace ast{
 		basicType operator()(Return const& x);
 		basicType operator()(ArrValue const& x);
 		basicType operator()(Assignment const& x);
-		basicType operator()(CopyValue const& x);
 		basicType operator()(AssignmentArr const& x);
 		basicType operator()(Print const& x);
 		basicType operator()(Comparison const& x);

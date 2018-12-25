@@ -88,11 +88,6 @@ namespace ast
 		std::cout<<") to "<<x.name<<std::endl;
 	}
 
-	void Printer::operator()(CopyValue const& x) const
-	{
-		std::cout<<"Copying "<<x.from<<" to "<<x.to<<std::endl;
-	}
-
 	void Printer::operator()(AssignmentArr const& x) const
 	{
 		std::cout<<"Assigning value(";

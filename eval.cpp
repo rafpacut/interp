@@ -137,15 +137,11 @@ namespace ast{
 
 	basicType Eval::operator()(Assignment const& x)
 	{
-		int value = get<int>((*this)(x.value));
-		env.assignValue(x.name, value);
-
-		return 0;
-	}
-
-	basicType Eval::operator()(CopyValue const& x)
-	{
-		env.copyValue(x.from, x.to);
+		basicType value = (*this)(x.value);
+		apply_visitor(LambdaVisitor(
+				[this, &x](const int v){ env.assignValue(x.name, v);},
+				[this, &x](const std::vector<int> v){ env.assignValue(x.name,v);}),
+				value);
 		return 0;
 	}
 

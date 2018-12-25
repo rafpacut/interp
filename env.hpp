@@ -53,7 +53,6 @@ namespace ast
 
 		template<typename T>
 		void assignValue(const std::string&, const T&, optional<size_t> id = boost::none);
-		void copyValue(const std::string&, const std::string&);
 
 		void createScope();
 		void deleteScope();

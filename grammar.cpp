@@ -15,7 +15,6 @@ namespace grammar
 	x3::rule<class arrType, std::string> const arrType("arrType");
 	x3::rule<class varDecl_, ast::VarDecl> const varDecl("varDecl");
 	x3::rule<class assignment_, ast::Assignment> const assignment("assignment");
-	x3::rule<class copyValue, ast::CopyValue> const copyValue("copyValue");
 	x3::rule<class comparison_, ast::Comparison> const comparison("comparison");
 	x3::rule<class whileLoop_, ast::WhileLoop> const whileLoop("whileLoop");
 	x3::rule<class conditional, ast::Conditional > const conditional("conditional");
@@ -41,14 +40,13 @@ namespace grammar
 	= (x3::alpha >> *x3::alnum); 
 
 	const auto returnStmt_def
-	= x3::lit("return") >> expression; //kinda doesn't make sense, but in future I'd like to return arrays
+	= x3::lit("return") >> expression; 
 
 	const auto varDecl_def
 	=  type >> name >> -('=' >> expression);
 
 	const auto arrDecl_def
 	= arrType >> name >> -('=' >> expression);
-	//>> -('=' >> '{' >> x3::int_ % ',' >> '}';
 	
 	const auto functionDecl_def
 	= type >> name >> '(' >> (varDecl | arrDecl) % ',' >> ')'
@@ -60,9 +58,6 @@ namespace grammar
 
 	const auto assignment_def
 	= name >> '=' >> expression;
-
-	const auto copyValue_def
-	= name >> '=' >> name;
 
 	const auto arrValue_def
 	= name >> '[' >> expression >> ']';
@@ -150,7 +145,6 @@ namespace grammar
 	    | (returnStmt >> ';')
 	    | (varDecl >> ';')
 	    | (arrDecl >> ';')
-	    | (copyValue >> ';')
 	    | (assignment >> ';')
 	    | (print >> ';')
 	    | (functionCall >> ';')
@@ -177,7 +171,6 @@ namespace grammar
 	  , functionCall
 	  , arrValue
 	  , assignment
-	  , copyValue
 	  , assignmentArr
 	  , codeBlock
 	  , whileLoop
