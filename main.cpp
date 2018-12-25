@@ -56,12 +56,13 @@ int main(int argc, char **argv)
 	    		std::cout<<e.what()<<std::endl;
 	    		return 1;
 	    	}
-	    	catch(std::out_of_range& e)
+	    	catch(std::out_of_range& e) //doesn't say which var is undeclared.
 	    	{
 	    		std::cout<<"Using undeclared variable"<<std::endl;
 	    	}
 	    	catch(...)
 	    	{
+			std::cout<<"Unknown error happened\n";
 	    		return 1;
 	    	}
 	
@@ -107,7 +108,7 @@ int main(int argc, char **argv)
 	    	    }
 	    	    catch(...)
 	    	    {
-	    		    std::cout<<"Caught an error"<<std::endl;
+				std::cout<<"Unknown error happened\n";
 	    	    }//do nothing. Rn all throwable exceptions allow processing of the next query.
 	    	}
 	    	else
