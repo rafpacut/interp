@@ -1,22 +1,24 @@
 #include "eval.h"
 #include <string>
+#include <iostream>
 #include <iterator>
 #include "LambdaVisitor.hpp"
 
 
 namespace ast{
-        int Eval::operator()(unsigned int n)  { return n; }
+        basicType Eval::operator()(unsigned int n)  { return n; }
 	
-	int Eval::operator()(int n)  { return n; }
+	basicType Eval::operator()(int n)  { return n; }
 
-	int Eval::operator()(std::string s) 
+	basicType Eval::operator()(std::string s) 
 	{
 		return env.getValue(s);
 	}
 
-        int Eval::operator()(Operation const& x, int lhs) 
+        basicType Eval::operator()(Operation const& x, basicType operand) 
         {
-	    int rhs = boost::apply_visitor(*this, x.operand_);
+	    int rhs = get<int>(boost::apply_visitor(*this, x.operand_));
+	    int lhs = get<int>(operand);
             switch (x.operator_)
             {
                 case '+': return lhs + rhs;
@@ -28,9 +30,9 @@ namespace ast{
             return 0;
         }
 
-        int Eval::operator()(Signed_ const& x) 
+        basicType Eval::operator()(Signed_ const& x) 
         {
-		int rhs = boost::apply_visitor(*this, x.operand_);
+		int rhs = get<int>(boost::apply_visitor(*this, x.operand_));
 		switch (x.sign)
 		{
 		    case '-': return -rhs;
@@ -40,10 +42,10 @@ namespace ast{
 		return 0;
         }
 
-	int Eval::operator()(Comparison const& x) 
+	basicType Eval::operator()(Comparison const& x) 
 	{
-		int lhs = (*this)(x.lhs);
-		int rhs = (*this)(x.rhs);
+		int lhs = get<int>((*this)(x.lhs));
+		int rhs = get<int>((*this)(x.rhs));
 
 		if(x.op == "<")
 			return lhs < rhs;
@@ -61,72 +63,71 @@ namespace ast{
 		throw std::runtime_error("Expected logical comparison operator, got " + x.op);
 	}
 
-	int Eval::operator()(ArrValue const& x) 
+	basicType Eval::operator()(ArrValue const& x) 
 	{
-		int idx = (*this)( x.idx);
+		int idx = get<int>((*this)( x.idx));
 		return env.getValue(x.name, idx);
 	}
 
-	int Eval::operator()(Print const& x) 
+	basicType Eval::operator()(Print const& x) 
 	{
-		int val = (*this)(x.val);
-		std::cout<<val<<std::endl;
-
+		basicType val = (*this)(x.val);
+		apply_visitor(LambdaVisitor(
+				[](const int val)
+				{ std::cout<<val<<'\n';},
+				[](const std::vector<int>& val)
+				{
+					std::copy(val.begin(), val.end(), std::ostream_iterator<int>(std::cout,", "));
+				}),
+				val);
 		return 0;
 	}
 
-	int Eval::operator()(VarDecl const& x)
+	basicType Eval::operator()(VarDecl const& x)
 	{
 		optional<int> value = boost::none;
 		if(x.value)
-			value = (*this)(*(x.value));
+			value = get<int>((*this)(*(x.value)));
 
 		env.declare(x.name, value);
 
 		return 0;
 	}
 
-	int Eval::operator()(ArrDecl const& x)
+	basicType Eval::operator()(ArrDecl const& x)
 	{
+		optional<std::vector<int>> val;
 		if(x.initValue)
 		{
-			apply_visitor(LambdaVisitor(
-						[this, &x](const FunctionCall& fCall) 
-						{
-							std::vector<int> val;
-							(*this)(fCall);
-							env.getReturn(val);
-							env.declare(x.name, val);
-						},
-						[this, &x](const std::string& name)
-						{
-							env.declare(x.name, optional<std::vector<int>>(boost::none));
-							(*this)(CopyValue(x.name, name));
-						}),
-						*x.initValue);
+			try{
+				val = get<std::vector<int>>((*this)(*(x.initValue)));
+			}
+			catch(boost::bad_get& e)
+			{
+				std::cout<<"bad get. Did not retrieve an array.?!\n";
+			}
 		}
 		else
-			env.declare(x.name, optional<std::vector<int>>(boost::none));
+			val = boost::none;
+
+		env.declare(x.name, val);
 
 		return 0;
 	}
 
-	int Eval::operator()(const std::list<Statement>& body)
+	basicType Eval::operator()(const std::list<Statement>& body)
 	{
-		int state = 0;
 		env.createScope();
 		for(Statement const& stmt: body)
-		{
-			state += (*this)(stmt);
-		}
+			(*this)(stmt);
 		env.deleteScope();
 
-		return state;
+		return 0;
 	}
 
-	int Eval::operator()(Conditional const& x)
+	basicType Eval::operator()(Conditional const& x)
 	{
-		if((*this)(x.condition))
+		if(get<int>((*this)(x.condition)))
 			(*this)(x.tBody);
 		else if(x.fBody)
 			(*this)(*x.fBody);
@@ -134,52 +135,50 @@ namespace ast{
 		return 0;
 	}
 
-	int Eval::operator()(Assignment const& x)
+	basicType Eval::operator()(Assignment const& x)
 	{
-		int value = (*this)(x.value);
+		int value = get<int>((*this)(x.value));
 		env.assignValue(x.name, value);
 
 		return 0;
 	}
 
-	int Eval::operator()(CopyValue const& x)
+	basicType Eval::operator()(CopyValue const& x)
 	{
 		env.copyValue(x.from, x.to);
 		return 0;
 	}
 
-	int Eval::operator()(AssignmentArr const& x)
+	basicType Eval::operator()(AssignmentArr const& x)
 	{
-		int value = (*this)(x.value);
-		int id = (*this)(x.id.idx);
+		int value = get<int>((*this)(x.value));
+		int id = get<int>((*this)(x.id.idx));
 		env.assignValue(x.id.name, value, id);
 
 		return 0;
 	}
 
-	int Eval::operator()(Expr const& x) 
+	basicType Eval::operator()(Expr const& x) 
 	{
-		int value;
-		value = boost::apply_visitor(*this, x.first);
+		basicType value = apply_visitor(*this, x.first);
 
 		for(const Operation& o: x.rest)
-			value = (*this)(o, value);
+			value = (*this)(o, value); 
 
 		return value;
 	}
 
-	int Eval::operator()(WhileLoop const& x)
+	basicType Eval::operator()(WhileLoop const& x)
 	{
-		int state=0;
-		while((*this)(x.condition))
+		while(get<int>((*this)(x.condition)))
 		{
-			state = (*this)(x.body);
+			(*this)(x.body);
 		}
 
-		return state;
+		return 0;
 	}
 
-	int Eval::operator()(Statement const& x) 
+	basicType Eval::operator()(Statement const& x) 
 	{
 		if(debugOn)
 		{
@@ -187,65 +186,49 @@ namespace ast{
 			printEnv(env);
 		}
 
-		int value = 0;
-		value = boost::apply_visitor(*this, x);
-
-		return value;
+		return apply_visitor(*this, x);
 	}
 
-        int Eval::operator()(Program const& x) 
+        basicType Eval::operator()(Program const& x) 
         {
-	    int state = 0;
             for (Statement const& stmt : x.stmts)
-            {
-		state = (*this)(stmt);
-            }
+		(*this)(stmt);
 
-            return state;
+            return 0;
         }
 
-	int Eval::operator()(FunctionDecl const& x)
+	basicType Eval::operator()(FunctionDecl const& x)
 	{
 		env.declare(x);
 		return 0;
 	}
 
-	int Eval::operator()(Return const& x)
+	basicType Eval::operator()(Return const& x)
 	{
 		returnStatementEvald = true;
-		apply_visitor(LambdaVisitor(
-					[this](const std::string& varName)
-					{ env.markReturnedValue(varName); },
-					[this](ast::Expr const& e)
-					{
-						int value = (*this)(e);
-						env.markReturnedValue(value);
-					}
-				),
-				x.value);
-
-		return 0;
+		return (*this)(x.value);
 	}
 
-	int Eval::processFBody(std::list<Statement> body)
+	basicType Eval::processFBody(std::list<Statement> body)
 	{
 		returnStatementEvald = false;
+		basicType returnValue;
 		for(auto& stmt: body)
 		{
-			(*this)(stmt);
+			returnValue = (*this)(stmt);
 			if(returnStatementEvald) break;
 		}
 
-		return 0;
+		return returnValue;
 	}
 
-	int Eval::operator()(const FunctionCall& x) 
+	basicType Eval::operator()(const FunctionCall& x) 
 	{
 		FunctionDecl f = getFunction(x.name);
 
-		std::vector<int> paramVals;
+		std::vector<basicType> paramVals;
 		std::transform(x.params.begin(), x.params.end(), std::back_inserter(paramVals),
-				[this](ast::param a) -> int 
+				[this](ast::param a) -> basicType 
 				{
 					return boost::apply_visitor(*this,a);
 				});
@@ -256,24 +239,12 @@ namespace ast{
 
 		passParameters(f.args, paramVals);
 
-		processFBody(f.body);
+		basicType returnValue = processFBody(f.body);
 
-		//GET returned values from Environment
-		//--------------------------------------------------
-		//what if there was no return? Throw in env...
-		int state;
-	        env.getReturn(state);
-
-		std::vector<int> retValue;
-		env.getReturn(retValue);
-
-		//Remove function Environment and use old one.
 		env = callStack.top();
 		callStack.pop();
 
-		env.markReturnedValue(retValue);
-
-		return state;
+		return returnValue;
 	}
 
 	FunctionDecl Eval::getFunction(std::string fName)
@@ -287,7 +258,7 @@ namespace ast{
 		return *fIt;
 	}
 
-	void Eval::passParameters(const std::vector<ast::argument>& argDecls, const std::vector<int>& params)
+	void Eval::passParameters(std::vector<ast::argument>& argDecls, std::vector<basicType>& params)
 	{
 		if(params.size() != argDecls.size())
 			throw std::runtime_error("Expected "+std::to_string(argDecls.size())+" arguments, got "+std::to_string(params.size()));
@@ -295,14 +266,29 @@ namespace ast{
 		for(size_t i = 0; i < argDecls.size(); i++) 
 		{
 			boost::apply_visitor(LambdaVisitor(
-						[this, &params, i](const VarDecl& a)
+						[this, &params, i](VarDecl& a)
 						{
+							int value;
+							try{
+								value = get<int>(params[i]);
+							}catch(boost::bad_get& e)
+							{
+								throw std::runtime_error("In functionCall {name}: expects an integer parameter");
+							}
 							(*this)(a);
-							this->env.assignValue(a.name, params[i]);
+							env.assignValue(a.name, value);
 						},
-						[](const ArrDecl&)
+						[this, &params, i](const ArrDecl& a)
 						{
-							throw std::runtime_error("array passing not yet implemented");
+							std::vector<int> value;
+							try{
+								 value = get<std::vector<int>>(params[i]);
+							}catch(boost::bad_get& e)
+							{
+								throw std::runtime_error("In functionCall {name}: expects an array parameter");
+							}
+							(*this)(a);
+							env.assignValue(a.name, value);
 						}),
 					argDecls[i]);
 		}

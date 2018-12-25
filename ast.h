@@ -27,7 +27,9 @@ using boost::variant;
 	struct VarDecl;
 
 	using param = x3::variant<Expr, std::string>;
+	using simpleParam = x3::variant<int, std::vector<int>>; //resolvedParam? evaluatedParam? paramValues?
 	using argument = x3::variant<ArrDecl, VarDecl>;
+	using basicType = variant<int,std::vector<int>>;
 
         struct Operand : x3::variant<
               unsigned int
@@ -107,7 +109,7 @@ using boost::variant;
 
 	struct Return
 	{
-		variant<Expr, std::string> value;
+		Expr value;
 	};
 
 	struct FunctionCall
@@ -120,8 +122,7 @@ using boost::variant;
 	{
             std::string type;
             std::string name;
-	    optional<variant<FunctionCall, std::string>> initValue;
-	    //init list
+	    optional<Expr> initValue;
 	};
 
         struct Statement : x3::variant<

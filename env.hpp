@@ -18,10 +18,12 @@ namespace ast
 		template<typename T>
 		void declare(const std::string&, const T);
 
-		int getValue(const std::string&, const optional<unsigned int> = boost::none) const;
+		basicType getValue(const std::string&, const optional<size_t> = boost::none) const;
 
-		void assignValue(const std::string, const int, const optional<unsigned int> = boost::none);
-		void assignValue(const std::string, const optional<std::vector<int>>&);
+		void assignValue(const std::string, const int, const size_t);
+		void assignValue(const std::string, const std::vector<int>, const size_t);
+		void assignValue(const std::string, const std::vector<int>);
+		void assignValue(const std::string, const int);
 
 		void insertValue(const std::string&, const optional<int>);
 		void insertValue(const std::string&, const optional<std::vector<int>>);
@@ -40,7 +42,6 @@ namespace ast
 	{
 		using Function = FunctionDecl;
 
-
 		Environment();
 		Environment(const Environment& e);
 
@@ -48,25 +49,14 @@ namespace ast
 		void declare(const std::string&, const T);
 		void declare(const Function&);
 
-		int getValue(const std::string&, optional<unsigned int> idx = boost::none) const;
-
-		void markReturnedValue(int);
-		void markReturnedValue(std::string);
-		void markReturnedValue(std::vector<int> vec);
-
-		void getReturn(int&);
-		void getReturn(std::vector<int>& a);
+		basicType getValue(const std::string&, optional<size_t> idx = boost::none) const;
 
 		template<typename T>
-		void assignValue(const std::string&, const T& value, optional<unsigned int> id = boost::none);
+		void assignValue(const std::string&, const T&, optional<size_t> id = boost::none);
 		void copyValue(const std::string&, const std::string&);
 
 		void createScope();
 		void deleteScope();
-
-		std::string stringReturn;
-		int intReturn;
-		std::vector<int> arrayReturn;
 
 		std::list<Scope> scopes;
 		std::vector<Function> functions;
@@ -80,16 +70,14 @@ namespace ast
 	}
 
 	template<typename T>
-	void Environment::assignValue(const std::string& name, const T& value, const optional<unsigned int> idx)
+	void Environment::assignValue(const std::string& name, const T& value, const optional<size_t> idx)
 	{
 		auto res = std::find_if(scopes.rbegin(), scopes.rend(),
 				[&name](const Scope& s){ return s.hasVariable(name);}
 				);
 
-
 		if(res == scopes.rend())
 			throw std::runtime_error("Cannot find variable with name "+name);
-
 
 		if(idx)
 			res->assignValue(name, value, *idx);

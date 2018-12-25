@@ -12,39 +12,43 @@
 namespace ast{
 
 	using boost::optional;
+	using boost::apply_visitor;
+	using boost::get;
 
 	struct Eval
 	{
 		Eval() = default;
 		Eval(bool debug) : debugOn(debug) {};
 
-		int operator()(unsigned int n);
-		int operator()(int n) ;
-		int operator()(std::string s);
-		int operator()(Operation const& x, int lhs);
-		int operator()(Signed_ const& x);
-		int operator()(VarDecl const& x);
-		int operator()(ArrDecl const& x);
-		int operator()(FunctionDecl const& x);
-		int operator()(FunctionCall const& x);
-		int operator()(Return const& x);
-		int operator()(ArrValue const& x);
-		int operator()(Assignment const& x);
-		int operator()(CopyValue const& x);
-		int operator()(AssignmentArr const& x);
-		int operator()(Print const& x);
-		int operator()(Comparison const& x);
-		int operator()(Expr const& x);
-		int operator()(Statement const& x);
-		int operator()(Program const& x);
-		int operator()(WhileLoop const& x);
-		int operator()(Conditional const& x);
-		int operator()(std::list<Statement> const& x);
+		basicType operator()(unsigned int n);
+		basicType operator()(int n) ;
+		basicType operator()(std::string s);
+		basicType operator()(Operation const& x, basicType lhs);
+		basicType operator()(Signed_ const& x);
+		basicType operator()(VarDecl const& x);
+		basicType operator()(ArrDecl const& x);
+		basicType operator()(FunctionDecl const& x);
+		basicType operator()(FunctionCall const& x);
+		basicType operator()(Return const& x);
+		basicType operator()(ArrValue const& x);
+		basicType operator()(Assignment const& x);
+		basicType operator()(CopyValue const& x);
+		basicType operator()(AssignmentArr const& x);
+		basicType operator()(Print const& x);
+		basicType operator()(Comparison const& x);
+		basicType operator()(Expr const& x);
+		basicType operator()(Statement const& x);
+		basicType operator()(Program const& x);
+		basicType operator()(WhileLoop const& x);
+		basicType operator()(Conditional const& x);
+		basicType operator()(std::list<Statement> const& x);
 
 
-		int processFBody(std::list<Statement>);
+		basicType processFBody(std::list<Statement>);
 		FunctionDecl getFunction(std::string fName);
-		void passParameters(const std::vector<ast::argument>& argDecls, const std::vector<int>& argValues);
+		void passParameters(std::vector<ast::argument>& argDecls, std::vector<basicType>& argValues);
+		//void passParameters(std::vector<ast::argument>& argDecls, std::vector<simpleParam>& argValues);
+		std::vector<simpleParam> resolveParams(std::vector<param> params);
 
 		bool returnStatementEvald = false;
 

@@ -16,7 +16,7 @@ namespace ast
 		this->createScope();
 	}
 
-	int Environment::getValue(const std::string& name, optional<unsigned int> idx) const
+	basicType Environment::getValue(const std::string& name, optional<size_t> idx) const
 	{
 		auto res = std::find_if(scopes.crbegin(), scopes.crend(),
 				[&name](Scope const& s){ return s.hasVariable(name);});
@@ -26,51 +26,6 @@ namespace ast
 
 		return res->getValue(name, idx);
 	}
-
-	void Environment::getReturn(int& a)
-	{
-		a = intReturn;	
-	}
-
-	void Environment::getReturn(std::vector<int>& a)
-	{
-		a = arrayReturn;
-	}
-
-	void Environment::markReturnedValue(int r)
-	{
-		intReturn = r;
-	}
-
-	void Environment::markReturnedValue(std::vector<int> vec)
-	{
-		arrayReturn = vec;
-	}
-
-	void Environment::markReturnedValue(std::string name)
-	{
-		auto scopeIt = std::find_if(scopes.rbegin(), scopes.rend(),
-				[&name](Scope const& s){ return s.hasVariable(name);});
-		if(scopeIt == scopes.rend())
-			throw std::runtime_error("Cannot find variable with name "+name);
-
-		if(scopeIt->ints.find(name) != std::end(scopeIt->ints))
-		{
-			optional<int> var = scopeIt->ints.at(name);
-			if(!var) throw std::runtime_error("Returned value has to be initialized");
-			intReturn = *var;
-
-		}
-		else if(scopeIt->intVecs.find(name) != std::end(scopeIt->intVecs))
-		{
-			optional<std::vector<int>>& vec = scopeIt->intVecs.at(name);
-			if(!vec) throw std::runtime_error("Returned value has to be initialized");
-			arrayReturn = *vec;
-		}
-		else
-			throw std::runtime_error(name+" is undeclared");
-	}
-
 
 	void Environment::createScope()
 	{
@@ -111,46 +66,54 @@ namespace ast
 		functions.push_back(fun);
 	}
 
-	int Scope::getValue(const std::string& name, const optional<unsigned int> idx) const
+	basicType Scope::getValue(const std::string& name, const optional<size_t> idx) const
 	{
 		if(idx) 
 		{
 			auto vecPtr = intVecs.find(name);
-			//if we found a vec in this Scope. Redundant with Environment::getValue
-			//but let's keep it here just in case.
 			//if vector is initialized at all
 			//if it has a value at idx.
-			if(vecPtr != intVecs.end() && vecPtr->second && vecPtr->second->at(*idx))
+			if(vecPtr->second && vecPtr->second->at(*idx))
 				return vecPtr->second->at(*idx);
 			else
 				throw std::runtime_error("Using uninitialized variable: "+name);
 		}
 		else
 		{
-			return *(ints.at(name));
+			if(intVecs.find(name) != intVecs.end() && intVecs.at(name))
+				return *(intVecs.at(name));
+			else if(ints.find(name) != ints.end())
+				return *(ints.at(name));
 		}
+		throw std::runtime_error("Scope::getValue error. Dunno what it might mean");
 	}
 
-	void Scope::assignValue(const std::string name, const int value, const optional<unsigned int> idx)
+	void Scope::assignValue(const std::string name, const int value)
 	{
-		if(idx)
-		{
-			auto& vec = intVecs.at(name);
-			
-			if(!vec)//we called assign value to an uninitialized vector.
-			{
-				intVecs.at(name) = std::vector<int>();
-			}
+		ints.at(name) = value;
+	}
 
-			if(*idx > vec->size()+1)
-				throw std::runtime_error("Index much greater than vector size");
-			if(*idx == vec->size())
-				vec->push_back(value);
-			else
-				vec->at(*idx) = value;
-		}
+	void Scope::assignValue(const std::string name, const std::vector<int> value)
+	{
+		intVecs.at(name) = value;
+	}
+
+	void Scope::assignValue(const std::string name, const int value, const size_t idx)
+	{
+		auto& optionalVec = intVecs.at(name);
+		if(!optionalVec)
+			optionalVec = std::vector<int>();
+		auto& vec = *optionalVec;
+		if(idx > vec.size() + 1)
+			throw std::runtime_error("Array "+name+" has no value at "+std::to_string(idx)+" (size:"+std::to_string(vec.size())+")");
+		if(idx == vec.size())
+			vec.push_back(value);
 		else
-			ints.at(name) = value;
+			vec.at(idx) = value;
+	}
+	void Scope::assignValue(const std::string, const std::vector<int>, const size_t)
+	{
+		throw std::runtime_error("Trying to assign an array to array cell. Not yet implemented.");
 	}
 
 	void Scope::insertValue(const std::string& name, const optional<int> value)
