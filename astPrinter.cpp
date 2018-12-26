@@ -13,6 +13,7 @@ namespace ast
 
         void Printer::operator()(Operation const& x) const
         {
+		std::cout<<"(";
             boost::apply_visitor(*this, x.operand_);
             switch (x.operator_)
             {
@@ -21,6 +22,7 @@ namespace ast
                 case '*': std::cout << " mult"; break;
                 case '/': std::cout << " div"; break;
             }
+		std::cout<<")";
         }
 
         void Printer::operator()(Signed_ const& x) const

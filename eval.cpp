@@ -36,6 +36,7 @@ namespace ast{
 		    case '/': return lhs / rhs;
 		}
 		BOOST_ASSERT(0);
+		throw std::runtime_error("Operation operator unknown.");
 		return 0;
         }
 
@@ -48,6 +49,7 @@ namespace ast{
 		    case '+': return +rhs;
 		}
 		BOOST_ASSERT(0);
+		throw std::runtime_error("Signed sign unknown.");
 		return 0;
         }
 
@@ -136,12 +138,13 @@ namespace ast{
 
 	basicType Eval::operator()(Conditional const& x)
 	{
+		basicType res;
 		if(get<int>((*this)(x.condition)))
-			(*this)(x.tBody);
+			res = (*this)(x.tBody);
 		else if(x.fBody)
-			(*this)(*x.fBody);
+			res = (*this)(*x.fBody);
 
-		return 0;
+		return res;
 	}
 
 	basicType Eval::operator()(Assignment const& x)
@@ -192,8 +195,7 @@ namespace ast{
 			printAST(x);
 			printEnv(env);
 		}
-
-		return apply_visitor(*this, x);	
+		return apply_visitor(*this, x);
 	}
 
         basicType Eval::operator()(Program const& x) 
@@ -234,9 +236,6 @@ namespace ast{
 		FunctionDecl f = getFunction(x.name);
 
 		std::vector<basicType> paramVals;
-		//for(int i = 0; i <x.params.size(); ++i)
-		//	paramVals.push_back(boost::apply_visitor(*this,x.params[i]));
-
 		std::transform(x.params.begin(), x.params.end(), std::back_inserter(paramVals),
 				[this](param a) -> basicType 
 				{
