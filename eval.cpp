@@ -2,6 +2,7 @@
 #include <string>
 #include <iostream>
 #include <iterator>
+#include "passParams.hpp"
 #include "LambdaVisitor.hpp"
 
 
@@ -17,17 +18,25 @@ namespace ast{
 
         basicType Eval::operator()(Operation const& x, basicType operand) 
         {
-	    int rhs = get<int>(boost::apply_visitor(*this, x.operand_));
-	    int lhs = get<int>(operand);
-            switch (x.operator_)
-            {
-                case '+': return lhs + rhs;
-                case '-': return lhs - rhs;
-                case '*': return lhs * rhs;
-                case '/': return lhs / rhs;
-            }
-            BOOST_ASSERT(0);
-            return 0;
+		int rhs, lhs;
+		try{
+			rhs = get<int>(boost::apply_visitor(*this, x.operand_));
+			lhs = get<int>(operand);
+		}
+		catch(boost::bad_get&)
+		{
+			throw std::runtime_error("Non-integer cannot be a part of an expression");
+		}
+
+		switch (x.operator_)
+		{
+		    case '+': return lhs + rhs;
+		    case '-': return lhs - rhs;
+		    case '*': return lhs * rhs;
+		    case '/': return lhs / rhs;
+		}
+		BOOST_ASSERT(0);
+		return 0;
         }
 
         basicType Eval::operator()(Signed_ const& x) 
@@ -77,7 +86,7 @@ namespace ast{
 				{ std::cout<<val<<'\n';},
 				[](const std::vector<int>& val)
 				{
-					std::copy(val.begin(), val.end(), std::ostream_iterator<int>(std::cout,", "));
+					std::copy(val.begin(), val.end(), std::ostream_iterator<int>(std::cout," "));
 				}),
 				val);
 		return 0;
@@ -104,7 +113,7 @@ namespace ast{
 			}
 			catch(boost::bad_get& e)
 			{
-				std::cout<<"bad get. Did not retrieve an array.?!\n";
+				std::cout<<"In array declaration: initial value is not of array type.";
 			}
 		}
 		else
@@ -176,13 +185,15 @@ namespace ast{
 
 	basicType Eval::operator()(Statement const& x) 
 	{
+		//Should print AST, ask to step/continue and print Env after stmt eval
+		//Now it prints AST, prints Env before change and evals stmt.
 		if(debugOn)
 		{
 			printAST(x);
 			printEnv(env);
 		}
 
-		return apply_visitor(*this, x);
+		return apply_visitor(*this, x);	
 	}
 
         basicType Eval::operator()(Program const& x) 
@@ -223,8 +234,11 @@ namespace ast{
 		FunctionDecl f = getFunction(x.name);
 
 		std::vector<basicType> paramVals;
+		//for(int i = 0; i <x.params.size(); ++i)
+		//	paramVals.push_back(boost::apply_visitor(*this,x.params[i]));
+
 		std::transform(x.params.begin(), x.params.end(), std::back_inserter(paramVals),
-				[this](ast::param a) -> basicType 
+				[this](param a) -> basicType 
 				{
 					return boost::apply_visitor(*this,a);
 				});
@@ -259,34 +273,10 @@ namespace ast{
 		if(params.size() != argDecls.size())
 			throw std::runtime_error("Expected "+std::to_string(argDecls.size())+" arguments, got "+std::to_string(params.size()));
 
+		PassParameters passParams(*this);
 		for(size_t i = 0; i < argDecls.size(); i++) 
 		{
-			boost::apply_visitor(LambdaVisitor(
-						[this, &params, i](VarDecl& a)
-						{
-							int value;
-							try{
-								value = get<int>(params[i]);
-							}catch(boost::bad_get& e)
-							{
-								throw std::runtime_error("In functionCall {name}: expects an integer parameter");
-							}
-							(*this)(a);
-							env.assignValue(a.name, value);
-						},
-						[this, &params, i](const ArrDecl& a)
-						{
-							std::vector<int> value;
-							try{
-								 value = get<std::vector<int>>(params[i]);
-							}catch(boost::bad_get& e)
-							{
-								throw std::runtime_error("In functionCall {name}: expects an array parameter");
-							}
-							(*this)(a);
-							env.assignValue(a.name, value);
-						}),
-					argDecls[i]);
+			apply_visitor(passParams, argDecls[i], params[i]);
 		}
 	}
 
