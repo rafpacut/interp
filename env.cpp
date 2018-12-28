@@ -57,10 +57,15 @@ namespace ast
 		}
 		else
 		{
-			if(intVecs.find(name) != intVecs.end() && intVecs.at(name))
+			if(intVecs.find(name) != intVecs.end())
+			{
+				if(!intVecs.at(name)) throw std::runtime_error("Returning uninitialized variable "+name);
 				return *(intVecs.at(name));
-			else if(ints.find(name) != ints.end())
+			} else if(ints.find(name) != ints.end())
+			{
+				if(!ints.at(name)) throw std::runtime_error("Returning uninitialized variable "+name);	
 				return *(ints.at(name));
+			}
 		}
 		throw std::runtime_error("Scope::getValue error. Dunno what it might mean");
 	}
