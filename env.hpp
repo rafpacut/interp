@@ -6,6 +6,7 @@
 #include <vector>
 #include <unordered_map>
 #include <unordered_set>
+#include <set>
 
 #include "ast.h"
 
@@ -58,7 +59,7 @@ namespace ast
 		void deleteScope();
 
 		std::list<Scope> scopes;
-		std::vector<Function> functions;
+		std::set<Function> functions;
 	};
 
 

@@ -141,6 +141,11 @@ using boost::variant;
 		std::string name;
 		std::vector<argument> args;
 		std::list<Statement> body;
+
+		bool operator<(const FunctionDecl& rhs) const
+		{
+			return this->name < rhs.name;
+		}
 	};
 
 	struct Conditional

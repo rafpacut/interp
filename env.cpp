@@ -40,7 +40,9 @@ namespace ast
 
 	void Environment::declare(const Function& fun)
 	{
-		functions.push_back(fun);
+		auto [it, succesfullyInserted] = functions.insert(fun);
+		if(!succesfullyInserted)
+			throw std::runtime_error("Redefinition of function "+fun.name);
 	}
 
 	basicType Scope::getValue(const std::string& name, const optional<size_t> idx) const
