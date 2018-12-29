@@ -163,7 +163,7 @@ namespace ast
 			auto& params = *(x.params);
 			for(size_t i = 0; i < params.size(); ++i)
 			{
-				boost::apply_visitor(*this, params[i]);
+				(*this)(params[i]);
 				std::cout<<", ";
 			}
 		}

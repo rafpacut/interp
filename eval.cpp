@@ -257,7 +257,8 @@ namespace ast{
 			std::transform(params.begin(), params.end(), std::back_inserter(paramVals),
 					[this](param a) -> basicType 
 					{
-						return boost::apply_visitor(*this,a);
+						//return boost::apply_visitor(*this,a);
+						return (*this)(a);
 					});
 		}
 		return paramVals;

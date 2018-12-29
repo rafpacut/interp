@@ -54,7 +54,7 @@ namespace grammar
 	  ;
 
 	const auto functionCall_def
-	= name >> '(' >> -((expression | name) % ',') >> ')';
+	= name >> '(' >> -(expression % ',') >> ')';
 
 	const auto assignment_def
 	= name >> '=' >> expression;

@@ -27,7 +27,7 @@ using boost::variant;
 	struct VarDecl;
 
 	//to EXpr$
-	using param = x3::variant<Expr, std::string>;
+	using param = Expr;
 	using paramVector = optional<std::vector<param>>;
 	using argument = x3::variant<ArrDecl, VarDecl>;
 	using basicType = variant<int,std::vector<int>>;
