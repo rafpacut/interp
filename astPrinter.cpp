@@ -144,8 +144,12 @@ namespace ast
 		std::cout<<"Function declaration\n";
 		std::cout<<"name:"<<x.name;
 		std::cout<<"\nargs:\n";
-		for(const auto& a: x.args)
-			boost::apply_visitor(*this, a);
+		if(x.args)
+		{
+			auto& args = *(x.args);
+			for(const auto& a: args)
+				boost::apply_visitor(*this, a);
+		}
 
 		(*this)(x.body);
 	}
@@ -154,10 +158,14 @@ namespace ast
 	{
 		std::cout<<"Function call\n";
 		std::cout<<x.name<<'(';
-		for(size_t i = 0; i < x.params.size(); ++i)
+		if(x.params)
 		{
-			boost::apply_visitor(*this,x.params[i]);
-			std::cout<<", ";
+			auto& params = *(x.params);
+			for(size_t i = 0; i < params.size(); ++i)
+			{
+				boost::apply_visitor(*this, params[i]);
+				std::cout<<", ";
+			}
 		}
 		std::cout<<")\n";
 

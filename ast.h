@@ -28,6 +28,7 @@ using boost::variant;
 
 	//to EXpr$
 	using param = x3::variant<Expr, std::string>;
+	using paramVector = optional<std::vector<param>>;
 	using argument = x3::variant<ArrDecl, VarDecl>;
 	using basicType = variant<int,std::vector<int>>;
 
@@ -107,7 +108,7 @@ using boost::variant;
 	struct FunctionCall
 	{
 		std::string name;
-		std::vector<param> params; 
+		paramVector params; 
 	};
 
 	struct ArrDecl
@@ -139,7 +140,7 @@ using boost::variant;
 	{
 		std::string type;
 		std::string name;
-		std::vector<argument> args;
+		optional<std::vector<argument>> args;
 		std::list<Statement> body;
 
 		bool operator<(const FunctionDecl& rhs) const

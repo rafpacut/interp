@@ -11,7 +11,6 @@ namespace ast
 
 	Environment::Environment(const Environment& e) : functions(e.functions)
 	{
-		this->scopes.push_back(e.scopes.front());
 		this->createScope();
 	}
 
@@ -33,8 +32,9 @@ namespace ast
 
 	void Environment::deleteScope()
 	{
-		if(scopes.size() == 1)
-			throw std::runtime_error("Global scope cannot be deleted.");
+		//shouldn't ever throw, but...
+		if(scopes.size() == 0)
+			throw std::runtime_error("Deleting last scope");
 		scopes.pop_back();
 	}
 

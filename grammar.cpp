@@ -49,12 +49,12 @@ namespace grammar
 	= arrType >> name >> -('=' >> expression);
 	
 	const auto functionDecl_def
-	= type >> name >> '(' >> (varDecl | arrDecl) % ',' >> ')'
+	= type >> name >> '(' >> -((varDecl | arrDecl) % ',') >> ')'
 	  >>codeBlock 
 	  ;
 
 	const auto functionCall_def
-	= name >> '(' >> (expression|name) % ',' >> ')';
+	= name >> '(' >> -((expression | name) % ',') >> ')';
 
 	const auto assignment_def
 	= name >> '=' >> expression;

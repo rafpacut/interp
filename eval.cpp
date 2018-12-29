@@ -4,6 +4,7 @@
 #include <iterator>
 #include "passParams.hpp"
 #include "LambdaVisitor.hpp"
+#include "safeArithmetic.hpp"
 
 
 namespace ast{
@@ -30,15 +31,19 @@ namespace ast{
 
 		switch (x.operator_)
 		{
-		    case '+': return lhs + rhs;
-		    case '-': return lhs - rhs;
-		    case '*': return lhs * rhs;
-		    case '/': return lhs / rhs;
+			case '+': return safeArithmetic::add(lhs, rhs);
+			case '-': return safeArithmetic::sub(lhs, rhs);
+			case '*': return safeArithmetic::mult(lhs, rhs);
+			case '/': return safeArithmetic::div(lhs, rhs);
 		}
+
 		BOOST_ASSERT(0);
-		throw std::runtime_error("Operation operator unknown.");
-		return 0;
+
+		std::string errorMsg = "Unknown integer operator ";
+		errorMsg.push_back(x.operator_);
+		throw std::runtime_error(errorMsg);
         }
+
 
         basicType Eval::operator()(Signed_ const& x) 
         {
@@ -49,7 +54,7 @@ namespace ast{
 		    case '+': return +rhs;
 		}
 		BOOST_ASSERT(0);
-		throw std::runtime_error("Signed sign unknown.");
+		throw std::runtime_error("Unknown sign. Did you mean '-' or '+'?");
 		return 0;
         }
 
@@ -122,16 +127,6 @@ namespace ast{
 			val = boost::none;
 
 		env.declare(x.name, val);
-
-		return 0;
-	}
-
-	basicType Eval::operator()(const std::list<Statement>& body)
-	{
-		env.createScope();
-		for(Statement const& stmt: body)
-			(*this)(stmt);
-		env.deleteScope();
 
 		return 0;
 	}
@@ -218,8 +213,10 @@ namespace ast{
 		return (*this)(x.value);
 	}
 
-	basicType Eval::processFBody(std::list<Statement> body)
+	basicType Eval::operator()(const std::list<Statement>& body)
 	{
+		env.createScope();
+
 		returnStatementEvald = false;
 		basicType returnValue;
 		for(auto& stmt: body)
@@ -227,6 +224,7 @@ namespace ast{
 			returnValue = (*this)(stmt);
 			if(returnStatementEvald) break;
 		}
+		env.deleteScope();
 
 		return returnValue;
 	}
@@ -235,25 +233,34 @@ namespace ast{
 	{
 		FunctionDecl f = getFunction(x.name);
 
-		std::vector<basicType> paramVals;
-		std::transform(x.params.begin(), x.params.end(), std::back_inserter(paramVals),
-				[this](param a) -> basicType 
-				{
-					return boost::apply_visitor(*this,a);
-				});
-
+		std::vector<basicType> paramVals = evalParams(x.params);
 
 		callStack.push(env); 
 		env = Environment(env);
 
-		passParameters(f.args, paramVals);
+		passParameters(f, paramVals);
 
-		basicType returnValue = processFBody(f.body);
+		basicType returnValue = (*this)(f.body);
 
 		env = callStack.top();
 		callStack.pop();
 
 		return returnValue;
+	}
+
+	std::vector<basicType> Eval::evalParams(paramVector paramsOpt)
+	{
+		std::vector<basicType> paramVals;
+		if(paramsOpt)
+		{
+			auto& params = *(paramsOpt);
+			std::transform(params.begin(), params.end(), std::back_inserter(paramVals),
+					[this](param a) -> basicType 
+					{
+						return boost::apply_visitor(*this,a);
+					});
+		}
+		return paramVals;
 	}
 
 	FunctionDecl Eval::getFunction(std::string fName)
@@ -267,16 +274,25 @@ namespace ast{
 		return *fIt;
 	}
 
-	void Eval::passParameters(std::vector<ast::argument>& argDecls, std::vector<basicType>& params)
+	void Eval::passParameters(FunctionDecl& fun, std::vector<basicType>& params)
 	{
-		if(params.size() != argDecls.size())
-			throw std::runtime_error("Expected "+std::to_string(argDecls.size())+" arguments, got "+std::to_string(params.size()));
-
-		PassParameters passParams(*this);
-		for(size_t i = 0; i < argDecls.size(); i++) 
+		if(fun.args)
 		{
-			apply_visitor(passParams, argDecls[i], params[i]);
+			auto& argumentDecls = *(fun.args);
+			if(params.size() != argumentDecls.size())
+				throw std::runtime_error("Expected "+std::to_string(argumentDecls.size())+" argument(s), got "+std::to_string(params.size()));
+
+			PassParameters passParams(*this);
+			for(size_t i = 0; i < argumentDecls.size(); i++) 
+			{
+				apply_visitor(passParams, argumentDecls[i], params[i]);
+			}
 		}
+		else if(!params.empty())
+		{
+			throw std::runtime_error("Function "+fun.name+" expects no arguments, " +std::to_string(params.size()) + " provided.");
+		}
+
 	}
 
 }
