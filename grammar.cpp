@@ -62,9 +62,6 @@ namespace grammar
 	const auto arrValue_def
 	= name >> '[' >> expression >> ']';
 
-	const auto foo_def
-	= name >> '=' >> name;
-
 	const auto assignmentArr_def
 	= arrValue >> '=' >> expression;
 

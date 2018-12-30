@@ -46,8 +46,10 @@ namespace ast
 				if(a.second)
 				{
 					std::vector<int> vec = *(a.second);
+					std::cout<<'{';
 					std::copy(vec.cbegin(), vec.cend(),
 							std::ostream_iterator<int>(std::cout," "));
+					std::cout<<'}';
 				}
 				else
 					std::cout<<"--"<<std::endl;
