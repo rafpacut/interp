@@ -173,12 +173,13 @@ namespace ast{
 
 	basicType Eval::operator()(WhileLoop const& x)
 	{
+		basicType res;
 		while(get<int>((*this)(x.condition)))
 		{
-			(*this)(x.body);
+			res = (*this)(x.body);
 		}
 
-		return 0;
+		return res;
 	}
 
 	basicType Eval::operator()(Statement const& x) 
@@ -257,7 +258,6 @@ namespace ast{
 			std::transform(params.begin(), params.end(), std::back_inserter(paramVals),
 					[this](param a) -> basicType 
 					{
-						//return boost::apply_visitor(*this,a);
 						return (*this)(a);
 					});
 		}
