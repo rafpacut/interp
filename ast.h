@@ -1,12 +1,19 @@
 #ifndef AST_H_
 #define AST_H_
 
-
-#include <list>
+#include <boost/config/warning_disable.hpp>
+#include <boost/spirit/home/x3.hpp>
+#include <boost/spirit/home/x3/support/ast/position_tagged.hpp>
+#include <boost/spirit/home/x3/support/utility/error_reporting.hpp>
+#include <boost/spirit/home/x3/support/utility/annotate_on_success.hpp>
+#include <boost/fusion/include/adapt_struct.hpp>
+#include <boost/fusion/include/io.hpp>
 #include <boost/spirit/home/x3/support/ast/variant.hpp>
 #include <boost/fusion/adapted.hpp>
-#include <boost/spirit/home/x3.hpp>
 #include <boost/optional.hpp>
+#include <list>
+
+
 
 
 
@@ -26,7 +33,6 @@ using boost::variant;
 	struct ArrDecl;
 	struct VarDecl;
 
-	//to EXpr$
 	using param = Expr;
 	using paramVector = optional<std::vector<param>>;
 	using argument = x3::variant<ArrDecl, VarDecl>;
@@ -39,79 +45,79 @@ using boost::variant;
               , x3::forward_ast<Expr>
 	      , x3::forward_ast<ArrValue>
 	      , x3::forward_ast<FunctionCall>
-            >
+            >, x3::position_tagged
         {
             using base_type::base_type;
             using base_type::operator=;
         };
 
-        struct Signed_
+        struct Signed_ : x3::position_tagged
         {
             char sign;
             Operand operand_;
         };
 
-        struct Operation
+        struct Operation : x3::position_tagged
         {
             char operator_;
             Operand operand_;
         };
 
-	struct Expr
+	struct Expr : x3::position_tagged
 	{
 		Operand first; 
 		std::list<Operation> rest;
 	};
 
-	struct Comparison
+	struct Comparison : x3::position_tagged
 	{
 		Expr lhs;
 		std::string op;
 		Expr rhs;
 	};
 
-	struct Assignment
+	struct Assignment : x3::position_tagged
 	{
 		std::string name;
 		Expr value;
 	};
 
-	struct ArrValue
+	struct ArrValue : x3::position_tagged
 	{
 		std::string name;
 		Expr idx;
 	};
 
-	struct AssignmentArr
+	struct AssignmentArr : x3::position_tagged
 	{
 		ArrValue id;
 		Expr value;
 	};
 
-	struct Print 
+	struct Print  : x3::position_tagged
 	{
 		Expr val;
 	};
 
-	struct VarDecl
+	struct VarDecl : x3::position_tagged
 	{
             std::string type;
             std::string name;
 	    optional<Expr> value;
 	};
 
-	struct Return
+	struct Return : x3::position_tagged
 	{
 		Expr value;
 	};
 
-	struct FunctionCall
+	struct FunctionCall : x3::position_tagged
 	{
 		std::string name;
 		paramVector params; 
 	};
 
-	struct ArrDecl
+	struct ArrDecl : x3::position_tagged
 	{
             std::string type;
             std::string name;
@@ -130,13 +136,13 @@ using boost::variant;
 		x3::forward_ast<WhileLoop>,
 		x3::forward_ast<Conditional>,
 		Expr
-	>
+	>, x3::position_tagged
 	{
 		using base_type::base_type;
 		using base_type::operator=;
         };
 
-	struct FunctionDecl
+	struct FunctionDecl : x3::position_tagged
 	{
 		std::string type;
 		std::string name;
@@ -149,81 +155,17 @@ using boost::variant;
 		}
 	};
 
-	struct Conditional
+	struct Conditional : x3::position_tagged
 	{
 		Comparison condition;
 		std::list<Statement> tBody;
 		optional<std::list<Statement>> fBody;
 	};
 
-	struct WhileLoop
+	struct WhileLoop : x3::position_tagged
 	{
 		Comparison condition;
 		std::list<Statement> body;
 	};
-
-	struct Program {
-	    std::list<Statement> stmts; 
-	};
 } 
-
-BOOST_FUSION_ADAPT_STRUCT(ast::Signed_,
-    sign, operand_
-)
-
-BOOST_FUSION_ADAPT_STRUCT(ast::Operation,
-    operator_, operand_
-)
-
-BOOST_FUSION_ADAPT_STRUCT(ast::Return, value)
-
-BOOST_FUSION_ADAPT_STRUCT(ast::Expr, 
-		first, rest
-		)
-
-BOOST_FUSION_ADAPT_STRUCT(ast::Comparison,
-		lhs, op, rhs 
-)
-
-BOOST_FUSION_ADAPT_STRUCT(ast::WhileLoop,
-		condition, body
-		)
-
-BOOST_FUSION_ADAPT_STRUCT(ast::VarDecl, 
-		type, name, value
-		)
-	
-BOOST_FUSION_ADAPT_STRUCT(ast::ArrDecl, 
-		type, name, initValue
-		)
-
-BOOST_FUSION_ADAPT_STRUCT(ast::FunctionDecl,
-	       	type, name, args, body
-		)
-
-BOOST_FUSION_ADAPT_STRUCT(ast::FunctionCall,
-	       	name, params 
-		)
-
-BOOST_FUSION_ADAPT_STRUCT(ast::ArrValue, 
-		name, idx
-		)
-
-BOOST_FUSION_ADAPT_STRUCT(ast::Conditional, 
-		condition, tBody, fBody
-		)
-
-BOOST_FUSION_ADAPT_STRUCT(ast::Assignment, 
-		name, value
-		)
-
-BOOST_FUSION_ADAPT_STRUCT(ast::AssignmentArr, 
-		id, value
-		)
-
-BOOST_FUSION_ADAPT_STRUCT(ast::Print, val)
-
-
-BOOST_FUSION_ADAPT_STRUCT(ast::Program, stmts)
-
 #endif

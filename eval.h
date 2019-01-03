@@ -37,7 +37,7 @@ namespace ast{
 		basicType operator()(Comparison const& x);
 		basicType operator()(Expr const& x);
 		basicType operator()(Statement const& x);
-		basicType operator()(Program const& x);
+//		basicType operator()(Program const& x);
 		basicType operator()(WhileLoop const& x);
 		basicType operator()(Conditional const& x);
 		basicType operator()(std::list<Statement> const& x);
