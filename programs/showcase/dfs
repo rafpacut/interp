@@ -1,0 +1,50 @@
+array<int> left;
+array<int> right;
+left[0] = 1;
+right[0] = 2;
+
+left[1] = 3;
+right[1]= 0;
+
+left[2] = 4;
+right[2]= 5;
+
+left[3] = 6;
+right[3]= 7;
+
+left[4] = 0;
+right[4]= 0;
+
+left[5] = 0;
+right[5]= 8;
+
+left[6] = 0;
+right[6]= 0;
+
+left[7] = 0;
+right[7]= 0;
+
+left[8] = 9;
+right[8]= 0;
+
+left[9] = 0;
+right[9]= 0;
+
+int dfs(int i)
+{
+	print(i);
+	int leftIndex = left[i];
+	int rightIndex = right[i];
+	if(leftIndex != 0)
+	{
+		dfs(leftIndex);
+	}
+	if(rightIndex != 0)
+	{
+		dfs(rightIndex);
+	}
+
+}
+
+
+dfs(0);
