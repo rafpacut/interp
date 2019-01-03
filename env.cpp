@@ -9,9 +9,16 @@ namespace ast
 		this->createScope();
 	}
 
-	Environment::Environment(const Environment& e) : functions(e.functions)
+	Environment::Environment(const Environment& e) : scopes(e.scopes), functions(e.functions)
 	{
-		this->createScope();
+	}
+
+	Environment& Environment::operator=(Environment&& old)
+	{
+		this->scopes.push_back(old.scopes.front());
+		this->functions = old.functions;
+
+		return *this;
 	}
 
 	basicType Environment::getValue(const std::string& name, optional<size_t> idx) const
@@ -50,12 +57,16 @@ namespace ast
 		if(idx) 
 		{
 			auto vecPtr = intVecs.find(name);
-			//if vector is initialized at all
-			//if it has a value at idx.
-			if(vecPtr->second && vecPtr->second->at(*idx))
-				return vecPtr->second->at(*idx);
-			else
+			if(!vecPtr->second)
 				throw std::runtime_error("Using uninitialized variable: "+name);
+			auto vec = *(vecPtr->second);
+			//for(auto el: *(vecPtr->second))
+			//	std::cout<<el<<" ";
+			//std::cout<<'\n';
+			//if(!(vec->at(*idx)))
+			//	throw std::runtime_error("Array '"+name+"' has no value at "+std::to_string(*idx));
+
+			return vecPtr->second->at(*idx);
 		}
 		else
 		{

@@ -134,10 +134,14 @@ namespace ast{
 	basicType Eval::operator()(Conditional const& x)
 	{
 		basicType res;
+		env.createScope();
+
 		if(get<int>((*this)(x.condition)))
 			res = (*this)(x.tBody);
 		else if(x.fBody)
 			res = (*this)(*x.fBody);
+
+		env.deleteScope();
 
 		return res;
 	}
@@ -176,7 +180,11 @@ namespace ast{
 		basicType res;
 		while(get<int>((*this)(x.condition)))
 		{
+			env.createScope();
+
 			res = (*this)(x.body);
+
+			env.deleteScope();
 		}
 
 		return res;
@@ -191,7 +199,14 @@ namespace ast{
 			printAST(x);
 			printEnv(env);
 		}
-		return apply_visitor(*this, x);
+
+
+		basicType tmp = apply_visitor(*this, x);
+
+		if(debugOn)
+			printEnv(env);
+
+		return tmp;
 	}
 
         basicType Eval::operator()(Program const& x) 
@@ -216,8 +231,6 @@ namespace ast{
 
 	basicType Eval::operator()(const std::list<Statement>& body)
 	{
-		env.createScope();
-
 		returnStatementEvald = false;
 		basicType returnValue;
 		for(auto& stmt: body)
@@ -225,7 +238,6 @@ namespace ast{
 			returnValue = (*this)(stmt);
 			if(returnStatementEvald) break;
 		}
-		env.deleteScope();
 
 		return returnValue;
 	}
@@ -237,7 +249,7 @@ namespace ast{
 		std::vector<basicType> paramVals = evalParams(x.params);
 
 		callStack.push(env); 
-		env = Environment(env);
+		env = std::move(env);
 
 		passParameters(f, paramVals);
 

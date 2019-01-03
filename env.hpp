@@ -45,6 +45,8 @@ namespace ast
 
 		Environment();
 		Environment(const Environment& e);
+		Environment& operator=(const Environment&) = default;
+		Environment& operator=(Environment&&);
 
 		template<typename T>
 		void declare(const std::string&, const T);
