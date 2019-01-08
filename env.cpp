@@ -60,11 +60,6 @@ namespace ast
 			if(!vecPtr->second)
 				throw std::runtime_error("Using uninitialized variable: "+name);
 			auto vec = *(vecPtr->second);
-			//for(auto el: *(vecPtr->second))
-			//	std::cout<<el<<" ";
-			//std::cout<<'\n';
-			//if(!(vec->at(*idx)))
-			//	throw std::runtime_error("Array '"+name+"' has no value at "+std::to_string(*idx));
 
 			return vecPtr->second->at(*idx);
 		}
@@ -106,6 +101,7 @@ namespace ast
 		else
 			vec.at(idx) = value;
 	}
+
 	void Scope::assignValue(const std::string, const std::vector<int>, const size_t)
 	{
 		throw std::runtime_error("Trying to assign an array to array cell. Not yet implemented.");

@@ -8,7 +8,7 @@ namespace ast
 
 	void Printer::operator()(std::string s) const
 	{
-		std::cout<<"variable "<<s;
+		std::cout<<"(variable '"<<s<<"')";
 	}
 
         void Printer::operator()(Operation const& x) const
@@ -44,36 +44,35 @@ namespace ast
 
 	void Printer::operator()(Print const& x) const
 	{
-		std::cout<<"Print ";
+		std::cout<<"(Print ";
 		(*this)(x.val);
-		std::cout<<std::endl;
+		std::cout<<")\n";
 	}
 
 	void Printer::operator()(VarDecl const& x) const
 	{
-		std::cout<<"(Variable Declaration: name= "<<x.name<<" value= (";
+		std::cout<<"(Variable Declaration: name = '"<<x.name<<"' value = (";
 		if(x.value)
 			(*this)(*(x.value));
-		std::cout<<')';
+		std::cout<<")\n";
 	}
 
 	void Printer::operator()(ArrDecl const& x) const
 	{
-		std::cout<<"(Array Declaration: name= "<<x.name<<')'<<std::endl;
+		std::cout<<"(Array Declaration: name = '"<<x.name<<"')\n";
 	}
 
 	void Printer::operator()(ArrValue const& x) const
 	{
-		std::cout<<"(Array Value: name= "<<x.name;
+		std::cout<<"(Array name = '"<<x.name<<"' at(";
 		(*this)(x.idx);
-		std::cout<<')'<<std::endl;
+		std::cout<<"))\n";
 	}
 
 	void Printer::operator()(Conditional const& x) const
 	{
-		std::cout<<"IF ";
+		std::cout<<"(IF ";
 		(*this)(x.condition);
-		std::cout<<std::endl;
 		(*this)(x.tBody);
 
 		if(x.fBody)
@@ -81,13 +80,14 @@ namespace ast
 			std::cout<<"\n ELSE \n";
 			(*this)(*(x.fBody));
 		}
+		std::cout<<")\n";
 	}
 
 	void Printer::operator()(Assignment const& x) const
 	{
 		std::cout<<"Assigning value(";
 		(*this)(x.value);
-		std::cout<<") to "<<x.name<<std::endl;
+		std::cout<<") to "<<x.name<<'\n';
 	}
 
 	void Printer::operator()(AssignmentArr const& x) const
@@ -96,7 +96,7 @@ namespace ast
 		(*this)(x.value);
 		std::cout<<") to ";
 		(*this)(x.id);
-		std::cout<<std::endl;
+		std::cout<<'\n';
 	}
 
 	void Printer::operator()(Expr const& x) const
@@ -113,7 +113,7 @@ namespace ast
 	{
 		std::cout<<"While loop (";
 		(*this)(x.condition);
-		std::cout<<")\n";
+		std::cout<<')';
 		(*this)(x.body);
 	}
 

@@ -98,8 +98,6 @@ namespace ast
 		else
 			throw std::runtime_error("Name "+name+" is already in use.");
 	}
-
-
 }
 
 #endif
