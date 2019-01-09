@@ -16,6 +16,18 @@ namespace grammar
                 return x3::error_handler_result::fail;
             }
         };
+    struct position_cache_tag;
+
+    struct annotate_position
+    {
+        template <typename T, typename Iterator, typename Context>
+        inline void on_success(Iterator const& first, Iterator const& last
+        , T& ast, Context const& context)
+        {
+            auto& position_cache = x3::get<position_cache_tag>(context).get();
+            position_cache.annotate(ast, first, last);
+        }
+    };
 
 	struct expression_	;
 	struct term_      	;
@@ -211,26 +223,26 @@ namespace grammar
 	  , arrType
         );
 
-	struct statement_ 	: error_handler, x3::annotate_on_success {};
-	struct expression_	: x3::annotate_on_success {};
-	struct term_      	: x3::annotate_on_success {};
-	struct factor_    	: x3::annotate_on_success {};
-	struct name_      	: x3::annotate_on_success {};
-	struct print_     	: x3::annotate_on_success {};
-	struct type_      	: x3::annotate_on_success {};
-	struct arrType    	: x3::annotate_on_success {};
-	struct varDecl_   	: x3::annotate_on_success {};
-	struct assignment_	: x3::annotate_on_success {};
-	struct comparison_	: x3::annotate_on_success {};
-	struct whileLoop_ 	: x3::annotate_on_success {};
-	struct conditional	: x3::annotate_on_success {};
-	struct codeBlock_ 	: x3::annotate_on_success {};
-	struct arrDecl_   	: x3::annotate_on_success {};
-	struct assignmentArr_	: x3::annotate_on_success {};
-	struct arrValue   	: x3::annotate_on_success {};
-	struct functionDecl	: x3::annotate_on_success {};
-	struct functionCall	: x3::annotate_on_success {}; 
-	struct returnStmt 	: x3::annotate_on_success {};
+	struct statement_ 	: error_handler, annotate_position {};
+	struct expression_	: annotate_position {};
+	struct term_      	: annotate_position {};
+	struct factor_    	: annotate_position {};
+	struct name_      	: annotate_position {};
+	struct print_     	: annotate_position {};
+	struct type_      	: annotate_position {};
+	struct arrType    	: annotate_position {};
+	struct varDecl_   	: annotate_position {};
+	struct assignment_	: annotate_position {};
+	struct comparison_	: annotate_position {};
+	struct whileLoop_ 	: annotate_position {};
+	struct conditional	: annotate_position {};
+	struct codeBlock_ 	: annotate_position {};
+	struct arrDecl_   	: annotate_position {};
+	struct assignmentArr_	: annotate_position {};
+	struct arrValue   	: annotate_position {};
+	struct functionDecl	: annotate_position {};
+	struct functionCall	: annotate_position {}; 
+	struct returnStmt 	: annotate_position {};
 
 }
 
