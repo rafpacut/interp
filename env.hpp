@@ -29,6 +29,8 @@ namespace ast
 		void insertValue(const std::string&, const optional<int>);
 		void insertValue(const std::string&, const optional<std::vector<int>>);
 
+		void arrayExtend(std::string const&, int const);
+
 		bool hasVariable(const std::string&) const;
 
 		std::unordered_map<std::string, optional<int>> ints;
@@ -57,6 +59,9 @@ namespace ast
 		template<typename T>
 		void assignValue(const std::string&, const T&, optional<size_t> id = boost::none);
 
+		template<typename T>
+		void arrayExtend(std::string const&, T const&);
+
 		void createScope();
 		void deleteScope();
 
@@ -64,6 +69,15 @@ namespace ast
 		std::set<Function> functions;
 	};
 
+	template<typename T>
+	void Environment::arrayExtend(std::string const& name, T const& value)
+	{
+		auto res = std::find_if(scopes.rbegin(), scopes.rend(),
+				[&name](const Scope& s){ return s.hasVariable(name);}
+				);
+
+		res->arrayExtend(name, value);
+	}
 
 	template<typename T>
 	void Environment::declare(const std::string& name, const T value)

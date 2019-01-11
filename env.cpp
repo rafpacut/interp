@@ -117,6 +117,14 @@ namespace ast
 		intVecs.insert({name, value});
 	}
 
+	void Scope::arrayExtend(std::string const& name, int const value)
+	{
+		auto& vec = intVecs.at(name);
+		if(!vec) vec = std::vector<int>();
+
+		(*vec).push_back(value);
+	}
+
 	bool Scope::hasVariable(const std::string& name) const
 	{
 		return declaredNames.find(name) != declaredNames.end();

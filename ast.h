@@ -27,7 +27,6 @@ using boost::variant;
 	struct ArrDecl;
 	struct VarDecl;
 
-	//to EXpr$
 	using param = Expr;
 	using paramVector = optional<std::vector<param>>;
 	using argument = x3::variant<ArrDecl, VarDecl>;
@@ -72,6 +71,12 @@ using boost::variant;
 	};
 
 	struct Assignment
+	{
+		std::string name;
+		Expr value;
+	};
+
+	struct PushBack
 	{
 		std::string name;
 		Expr value;
@@ -126,6 +131,7 @@ using boost::variant;
 		x3::forward_ast<FunctionDecl>,
 		FunctionCall,
 		Print,
+		PushBack,
 		Assignment,
 		AssignmentArr,
 		x3::forward_ast<WhileLoop>,
@@ -162,15 +168,5 @@ using boost::variant;
 		Comparison condition;
 		std::list<Statement> body;
 	};
-
-	//struct Program {
-	//	Program& operator=(std::list<Statement> stmts_)
-	//	{
-	//		this->stmts(stmts_);
-	//		return *this;
-	//	}
-
-	//    std::list<Statement> stmts; 
-	//};
 } 
 #endif

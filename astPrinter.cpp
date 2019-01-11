@@ -25,6 +25,13 @@ namespace ast
 		std::cout<<")";
         }
 
+	void Printer::operator()(PushBack const& x) const
+	{
+		std::cout<<"Extending Array '"<<x.name<<"' with ";
+		(*this)(x.value);
+		std::cout<<'\n';
+	}
+
         void Printer::operator()(Signed_ const& x) const
         {
             boost::apply_visitor(*this, x.operand_);
@@ -121,16 +128,6 @@ namespace ast
 	{
 		boost::apply_visitor(*this, x);
 	}
-
-        //void Printer::operator()(Program const& x) const
-        //{
-        //    for (Statement const& stmt : x.stmts)
-        //    {
-        //        std::cout << "Statement: ";
-        //        (*this)(stmt);
-	//	std::cout<<'\n';
-        //    }
-        //}
 
 	void Printer::operator()(Return const& x) const
 	{

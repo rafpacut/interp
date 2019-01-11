@@ -26,6 +26,9 @@ BOOST_FUSION_ADAPT_STRUCT(ast::WhileLoop,
 BOOST_FUSION_ADAPT_STRUCT(ast::VarDecl, 
 		type, name, value
 		)
+
+BOOST_FUSION_ADAPT_STRUCT(ast::PushBack,
+		name, value)
 	
 BOOST_FUSION_ADAPT_STRUCT(ast::ArrDecl, 
 		type, name, initValue

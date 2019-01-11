@@ -27,6 +27,7 @@ namespace ast
 		void operator()(AssignmentArr const&) const;
 		void operator()(Print const&) const;
 		void operator()(Comparison const&) const;
+		void operator()(PushBack const&) const;
 		void operator()(Expr const&) const;
 		void operator()(Statement const&) const;
 		void operator()(WhileLoop const&) const;

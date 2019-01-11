@@ -24,7 +24,10 @@ namespace grammar
 	x3::rule<class functionDecl, ast::FunctionDecl> const functionDecl("functionDecl");
 	x3::rule<class functionCall, ast::FunctionCall> const functionCall("functionCall");
 	x3::rule<class returnStmt, ast::Return> const returnStmt("returnStmt");
+	x3::rule<class pushBack, ast::PushBack> const pushBack("pushBack");
 
+	const auto pushBack_def 
+	= name >> ".push_back(" >> expression >> ')';
 
 	const auto type_def
 	= string("int")
@@ -56,7 +59,7 @@ namespace grammar
 	= name >> '(' >> -(expression % ',') >> ')';
 
 	const auto assignment_def
-	= name >> '=' > expression;
+	= name >> '=' >> expression;
 
 	const auto arrValue_def
 	= name >> '[' >> expression > ']';
@@ -142,6 +145,7 @@ namespace grammar
 	    | (varDecl >> ';')
 	    | (arrDecl >> ';')
 	    | (assignment >> ';')
+	    | (pushBack >> ';')
 	    | (print >> ';')
 	    | (functionCall >> ';')
 	    | (assignmentArr >> ';')
@@ -175,6 +179,7 @@ namespace grammar
 	  , type
 	  , returnStmt
 	  , arrType
+	  , pushBack
         );
 
 }

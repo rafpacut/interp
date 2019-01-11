@@ -79,6 +79,13 @@ namespace ast{
 		throw std::runtime_error("Expected logical comparison operator, got " + x.op);
 	}
 
+	basicType Eval::operator()(PushBack const& x)
+	{
+		basicType value = (*this)(x.value);
+		env.arrayExtend(x.name, get<int>(value));
+		return 0;
+	}
+
 	basicType Eval::operator()(ArrValue const& x) 
 	{
 		int idx = get<int>((*this)( x.idx));
