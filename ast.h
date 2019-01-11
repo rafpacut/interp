@@ -25,6 +25,7 @@ using boost::variant;
 	struct FunctionDecl;
 	struct FunctionCall;
 	struct ArrDecl;
+	struct ArraySize;
 	struct VarDecl;
 
 	using param = Expr;
@@ -39,6 +40,7 @@ using boost::variant;
               , x3::forward_ast<Expr>
 	      , x3::forward_ast<ArrValue>
 	      , x3::forward_ast<FunctionCall>
+	      , x3::forward_ast<ArraySize>
             >
         {
             using base_type::base_type;
@@ -74,6 +76,11 @@ using boost::variant;
 	{
 		std::string name;
 		Expr value;
+	};
+
+	struct ArraySize
+	{
+		std::string name;
 	};
 
 	struct PushBack
@@ -132,6 +139,7 @@ using boost::variant;
 		FunctionCall,
 		Print,
 		PushBack,
+		ArraySize,
 		Assignment,
 		AssignmentArr,
 		x3::forward_ast<WhileLoop>,

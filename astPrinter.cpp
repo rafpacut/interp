@@ -25,6 +25,11 @@ namespace ast
 		std::cout<<")";
         }
 
+	void Printer::operator()(ArraySize const& x) const
+	{
+		std::cout<<"array '"<<x.name<<"' size\n";
+	}
+
 	void Printer::operator()(PushBack const& x) const
 	{
 		std::cout<<"Extending Array '"<<x.name<<"' with ";

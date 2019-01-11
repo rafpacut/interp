@@ -79,6 +79,11 @@ namespace ast{
 		throw std::runtime_error("Expected logical comparison operator, got " + x.op);
 	}
 
+	basicType Eval::operator()(ArraySize const& x)
+	{
+		return env.arraySize(x.name);
+	}
+
 	basicType Eval::operator()(PushBack const& x)
 	{
 		basicType value = (*this)(x.value);
@@ -202,10 +207,7 @@ namespace ast{
 		//Should print AST, ask to step/continue and print Env after stmt eval
 		//Now it prints AST, prints Env before change and evals stmt.
 		if(debugOn)
-		{
 			printAST(x);
-			printEnv(env);
-		}
 
 
 		basicType tmp = apply_visitor(*this, x);

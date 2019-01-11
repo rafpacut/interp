@@ -25,9 +25,13 @@ namespace grammar
 	x3::rule<class functionCall, ast::FunctionCall> const functionCall("functionCall");
 	x3::rule<class returnStmt, ast::Return> const returnStmt("returnStmt");
 	x3::rule<class pushBack, ast::PushBack> const pushBack("pushBack");
+	x3::rule<class arraySize, ast::ArraySize> const arraySize("arraySize");
 
 	const auto pushBack_def 
 	= name >> ".push_back(" >> expression >> ')';
+
+	const auto arraySize_def
+	= name >> ".size()";
 
 	const auto type_def
 	= string("int")
@@ -91,6 +95,7 @@ namespace grammar
         const auto factor_def 
         =
 	        x3::uint_
+	    |   arraySize
 	    |   functionCall
             |   arrValue
             |   name		
@@ -146,6 +151,7 @@ namespace grammar
 	    | (arrDecl >> ';')
 	    | (assignment >> ';')
 	    | (pushBack >> ';')
+	    | (arraySize >> ';')
 	    | (print >> ';')
 	    | (functionCall >> ';')
 	    | (assignmentArr >> ';')
@@ -180,6 +186,7 @@ namespace grammar
 	  , returnStmt
 	  , arrType
 	  , pushBack
+	  , arraySize
         );
 
 }

@@ -27,6 +27,8 @@ BOOST_FUSION_ADAPT_STRUCT(ast::VarDecl,
 		type, name, value
 		)
 
+BOOST_FUSION_ADAPT_STRUCT(ast::ArraySize, name)
+
 BOOST_FUSION_ADAPT_STRUCT(ast::PushBack,
 		name, value)
 	

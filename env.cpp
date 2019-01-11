@@ -52,6 +52,25 @@ namespace ast
 			throw std::runtime_error("Redefinition of function "+fun.name);
 	}
 
+	int Environment::arraySize(const std::string& name) const
+	{
+		auto res = std::find_if(scopes.crbegin(), scopes.crend(),
+				[&name](Scope const& s){ return s.hasVariable(name);});
+
+		if(res == scopes.crend())
+			throw std::runtime_error("Cannot find variable with name "+name);
+
+		return res->arraySize(name);
+	}
+
+	int Scope::arraySize(const std::string& name) const
+	{
+		auto& vec = intVecs.at(name);
+		if(!vec)
+			throw std::runtime_error("Trying to get 'size' attribute of uninitialized array '"+name+"'");
+		return vec->size();
+	}
+
 	basicType Scope::getValue(const std::string& name, const optional<size_t> idx) const
 	{
 		if(idx) 

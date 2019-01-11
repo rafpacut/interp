@@ -30,6 +30,7 @@ namespace ast
 		void insertValue(const std::string&, const optional<std::vector<int>>);
 
 		void arrayExtend(std::string const&, int const);
+		int arraySize(std::string const&) const;
 
 		bool hasVariable(const std::string&) const;
 
@@ -61,6 +62,8 @@ namespace ast
 
 		template<typename T>
 		void arrayExtend(std::string const&, T const&);
+
+		int arraySize(std::string const&) const;
 
 		void createScope();
 		void deleteScope();
