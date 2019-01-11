@@ -34,13 +34,7 @@ parse(std::string const& input)
     auto const parser = grammar::program;
     bool r = phrase_parse(iter, end, parser, (eol|space), ast);
 
-    if (r && iter == end)
-    {
-            std::cout << "-------------------------\n";
-            std::cout << "Parsing succeeded\n";
-            std::cout << "-------------------------\n";
-    }
-    else
+    if (!r || iter != end)
     {
         std::cout << "-------------------------\n";
         std::cout << "Parsing failed\n";
