@@ -24,6 +24,9 @@ env: envPrinter
 
 clean:
 	rm *.o
+
+annot:
+	$(CXX) $(CXXFLAGS) env.cpp eval.cpp astPrinter.cpp envPrinter.cpp main.cpp -o dinterp.a -lstdc++fs
 	 
 rebuildDebug: 
 	$(CXX) $(DEBUGFLAGS) $(CXXFLAGS) env.cpp eval.cpp astPrinter.cpp envPrinter.cpp main.cpp -o dinterp.a -lstdc++fs
