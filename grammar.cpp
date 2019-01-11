@@ -45,7 +45,7 @@ namespace grammar
 	=  type >> name >> -('=' >> expression);
 
 	const auto arrDecl_def
-	= arrType >> name >> -('=' >> expression);
+	= type >> x3::lit("[]") >> name >> -('=' >> expression);
 	
 	const auto functionDecl_def
 	= type >> name >> '(' >> -((varDecl | arrDecl) % ',') >> ')'
@@ -56,13 +56,13 @@ namespace grammar
 	= name >> '(' >> -(expression % ',') >> ')';
 
 	const auto assignment_def
-	= name >> '=' >> expression;
+	= name >> '=' > expression;
 
 	const auto arrValue_def
-	= name >> '[' >> expression >> ']';
+	= name >> '[' >> expression > ']';
 
 	const auto assignmentArr_def
-	= arrValue >> '=' >> expression;
+	= arrValue >> '=' > expression;
 
 	const auto print_def
 	=   x3::lit("print(") 
