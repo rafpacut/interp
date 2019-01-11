@@ -29,7 +29,6 @@ namespace ast
 		void operator()(Comparison const&) const;
 		void operator()(Expr const&) const;
 		void operator()(Statement const&) const;
-		void operator()(Program const&) const;
 		void operator()(WhileLoop const&) const;
 		void operator()(Conditional const&) const;
 		void operator()(std::list<Statement> const&) const;

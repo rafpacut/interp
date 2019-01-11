@@ -8,7 +8,6 @@ namespace grammar
         x3::rule<class term_, ast::Expr> const term("term");
         x3::rule<class factor_, ast::Operand> const factor("factor");
 	x3::rule<class statement_, ast::Statement> const statement("statement");
-	x3::rule<class program_, std::list<ast::Statement> > const program("program");
 	x3::rule<class name_, std::string> const name("name");
 	x3::rule<class print_, ast::Print> const print("print");
 	x3::rule<class type_, std::string> const type("type");
@@ -150,7 +149,7 @@ namespace grammar
 	    ;
 
 
-	const auto program_def 
+	const auto program
 	= +statement
 	;
 
@@ -176,7 +175,6 @@ namespace grammar
 	  , type
 	  , returnStmt
 	  , arrType
-	  , program
         );
 
 }

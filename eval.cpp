@@ -209,13 +209,13 @@ namespace ast{
 		return tmp;
 	}
 
-        basicType Eval::operator()(Program const& x) 
-        {
-            for (Statement const& stmt : x.stmts)
-		(*this)(stmt);
+        //basicType Eval::operator()(Program const& x) 
+        //{
+        //    for (Statement const& stmt : x.stmts)
+	//	(*this)(stmt);
 
-            return 0;
-        }
+        //    return 0;
+        //}
 
 	basicType Eval::operator()(FunctionDecl const& x)
 	{

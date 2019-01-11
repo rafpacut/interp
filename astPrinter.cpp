@@ -122,15 +122,15 @@ namespace ast
 		boost::apply_visitor(*this, x);
 	}
 
-        void Printer::operator()(Program const& x) const
-        {
-            for (Statement const& stmt : x.stmts)
-            {
-                std::cout << "Statement: ";
-                (*this)(stmt);
-		std::cout<<'\n';
-            }
-        }
+        //void Printer::operator()(Program const& x) const
+        //{
+        //    for (Statement const& stmt : x.stmts)
+        //    {
+        //        std::cout << "Statement: ";
+        //        (*this)(stmt);
+	//	std::cout<<'\n';
+        //    }
+        //}
 
 	void Printer::operator()(Return const& x) const
 	{

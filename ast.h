@@ -7,7 +7,7 @@
 #include <boost/fusion/adapted.hpp>
 #include <boost/spirit/home/x3.hpp>
 #include <boost/optional.hpp>
-#include "astAdapted.hpp"
+//#include "astAdapted.hpp"
 
 
 
@@ -163,68 +163,14 @@ using boost::variant;
 		std::list<Statement> body;
 	};
 
-	struct Program {
-	    std::list<Statement> stmts; 
-	};
+	//struct Program {
+	//	Program& operator=(std::list<Statement> stmts_)
+	//	{
+	//		this->stmts(stmts_);
+	//		return *this;
+	//	}
+
+	//    std::list<Statement> stmts; 
+	//};
 } 
-
-//BOOST_FUSION_ADAPT_STRUCT(ast::Signed_,
-//    sign, operand_
-//)
-//
-//BOOST_FUSION_ADAPT_STRUCT(ast::Operation,
-//    operator_, operand_
-//)
-//
-//BOOST_FUSION_ADAPT_STRUCT(ast::Return, value)
-//
-//BOOST_FUSION_ADAPT_STRUCT(ast::Expr, 
-//		first, rest
-//		)
-//
-//BOOST_FUSION_ADAPT_STRUCT(ast::Comparison,
-//		lhs, op, rhs 
-//)
-//
-//BOOST_FUSION_ADAPT_STRUCT(ast::WhileLoop,
-//		condition, body
-//		)
-//
-//BOOST_FUSION_ADAPT_STRUCT(ast::VarDecl, 
-//		type, name, value
-//		)
-//	
-//BOOST_FUSION_ADAPT_STRUCT(ast::ArrDecl, 
-//		type, name, initValue
-//		)
-//
-//BOOST_FUSION_ADAPT_STRUCT(ast::FunctionDecl,
-//	       	type, name, args, body
-//		)
-//
-//BOOST_FUSION_ADAPT_STRUCT(ast::FunctionCall,
-//	       	name, params 
-//		)
-//
-//BOOST_FUSION_ADAPT_STRUCT(ast::ArrValue, 
-//		name, idx
-//		)
-//
-//BOOST_FUSION_ADAPT_STRUCT(ast::Conditional, 
-//		condition, tBody, fBody
-//		)
-//
-//BOOST_FUSION_ADAPT_STRUCT(ast::Assignment, 
-//		name, value
-//		)
-//
-//BOOST_FUSION_ADAPT_STRUCT(ast::AssignmentArr, 
-//		id, value
-//		)
-//
-//BOOST_FUSION_ADAPT_STRUCT(ast::Print, val)
-//
-//
-//BOOST_FUSION_ADAPT_STRUCT(ast::Program, stmts)
-
 #endif

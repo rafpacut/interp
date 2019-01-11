@@ -5,6 +5,8 @@
 #include <fstream>
 #include <string>
 
+#include "ast.h"
+#include "astAdapted.hpp"
 #include "cmdArgumentProcessor.cpp"
 #include "env.hpp"
 #include "astPrinter.h"
@@ -23,7 +25,7 @@ int main(int argc, char **argv)
 		runInteractive = true;
 
 	auto &parser = grammar::program;
-	ast::Program program; 
+	std::list<ast::Statement> ast; 
 	ast::Printer print;
 	ast::Eval eval(debug);
 	
@@ -39,17 +41,17 @@ int main(int argc, char **argv)
 	
 	       //process
 	       It iter = str.begin(), end = str.end();
-	       if(phrase_parse(iter, end, parser, (x3::space| x3::eol), program))
+	       if(phrase_parse(iter, end, parser, (x3::space| x3::eol), ast))
 	       {
 	    	if(debug)
 	    	{	
 	    		std::cout<< "Parsing succeded\n";
-	    		print(program);
+	    		print(ast);
 	    	}
 	
 	    	try
 	    	{
-	    		eval(program);
+	    		eval(ast);
 	    	}
 	    	catch(std::runtime_error& e)
 	    	{
@@ -86,17 +88,17 @@ int main(int argc, char **argv)
 	    	       	continue;
 	
 	    	It iter = str.begin(), end = str.end();
-	    	if(phrase_parse(iter, end, parser, (x3::space| x3::eol), program))
+	    	if(phrase_parse(iter, end, parser, (x3::space| x3::eol), ast))
 	    	{
 	    		if(debug)
 	    		{
 	    		    std::cout << "Parsing succeeded\n";
-	    		    print(program);
+	    		    print(ast);
 	    		}
 	
 	    	    try
 	    	    {
-	    		   eval(program);
+	    		   eval(ast);
 	    	    }
 	    	    catch(std::runtime_error& e)
 	    	    {
