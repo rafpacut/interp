@@ -1,5 +1,5 @@
-array<int> left;
-array<int> right;
+int[] left;
+int[] right;
 left[0] = 1;
 right[0] = 2;
 
