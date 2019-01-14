@@ -42,14 +42,14 @@ namespace ast
 			std::cout<<"	arrays:"<<std::endl;
 			for(const auto& a: s.intVecs)
 			{
-				std::cout<<a.first<<" : ";
+				std::cout<<"        "<<a.first<<" : ";
 				if(a.second)
 				{
 					std::vector<int> vec = *(a.second);
 					std::cout<<'{';
 					std::copy(vec.cbegin(), vec.cend(),
 							std::ostream_iterator<int>(std::cout," "));
-					std::cout<<'}';
+					std::cout<<"}\n";
 				}
 				else
 					std::cout<<"--"<<std::endl;

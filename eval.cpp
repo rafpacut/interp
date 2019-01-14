@@ -106,6 +106,7 @@ namespace ast{
 				[](const std::vector<int>& val)
 				{
 					std::copy(val.begin(), val.end(), std::ostream_iterator<int>(std::cout," "));
+					std::cout<<'\n';
 				}),
 				val);
 		return 0;

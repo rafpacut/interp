@@ -25,13 +25,23 @@ parse(std::string const& input)
 {
     using boost::spirit::x3::ascii::space;
     using boost::spirit::x3::eol;
+    using boost::spirit::x3::with;
+    using boost::spirit::x3::error_handler_tag;
 
     typedef std::string::const_iterator iterator_type;
+    using error_handler_type = boost::spirit::x3::error_handler<iterator_type>;
     iterator_type iter = input.begin();
     iterator_type const end = input.end();
 
     std::list<ast::Statement> ast;
-    auto const parser = grammar::program;
+
+    error_handler_type error_handler(iter, end, std::cerr);
+
+    auto const parser = with<error_handler_tag>(std::ref(error_handler))
+	    [
+		    grammar::program
+	    ];
+
     bool r = phrase_parse(iter, end, parser, (eol|space), ast);
 
     if (!r || iter != end)

@@ -2,48 +2,105 @@ namespace grammar
 {
 	namespace x3 = boost::spirit::x3;
 	using namespace x3;
+    
+     struct error_handler
+       {
+            template <typename Iterator, typename Exception, typename Context>
+            x3::error_handler_result on_error(
+                Iterator&, Iterator const& 
+              , Exception const& x, Context const& context)
+            {
+                auto& error_handler = x3::get<x3::error_handler_tag>(context).get();
+		std::string message;
+		const bool messageGibberish = x.which().find("boost") != std::string::npos;
 
+		if(messageGibberish)
+			message = "Error!";
+		else
+			message = "Error! Expecting: " + x.which() + " here:";
 
-        x3::rule<class expression_, ast::Expr> const expression("expression");
-        x3::rule<class term_, ast::Expr> const term("term");
-        x3::rule<class factor_, ast::Operand> const factor("factor");
-	x3::rule<class statement_, ast::Statement> const statement("statement");
-	x3::rule<class name_, std::string> const name("name");
-	x3::rule<class print_, ast::Print> const print("print");
-	x3::rule<class type_, std::string> const type("type");
-	x3::rule<class arrType, std::string> const arrType("arrType");
-	x3::rule<class varDecl_, ast::VarDecl> const varDecl("varDecl");
-	x3::rule<class assignment_, ast::Assignment> const assignment("assignment");
-	x3::rule<class comparison_, ast::Comparison> const comparison("comparison");
-	x3::rule<class whileLoop_, ast::WhileLoop> const whileLoop("whileLoop");
-	x3::rule<class conditional, ast::Conditional > const conditional("conditional");
-	x3::rule<class codeBlock_, std::list<ast::Statement> > const codeBlock("codeBlock");
-	x3::rule<class arrDecl_, ast::ArrDecl> const arrDecl("arrDecl");
-	x3::rule<class assignmentArr_, ast::AssignmentArr> const assignmentArr("assignmentArr");
-	x3::rule<class arrValue, ast::ArrValue> const arrValue("arrValue");
-	x3::rule<class functionDecl, ast::FunctionDecl> const functionDecl("functionDecl");
-	x3::rule<class functionCall, ast::FunctionCall> const functionCall("functionCall");
-	x3::rule<class returnStmt, ast::Return> const returnStmt("returnStmt");
-	x3::rule<class pushBack, ast::PushBack> const pushBack("pushBack");
-	x3::rule<class arraySize, ast::ArraySize> const arraySize("arraySize");
+		error_handler(x.where(), message);
+                return x3::error_handler_result::fail;
+            }
+	};
+
+      struct position_cache_tag;
+      
+      struct annotate_position
+      {
+	      template <typename T, typename Iterator, typename Context>
+	//      inline void on_success(Iterator const& first, Iterator const& last
+	//	       , T& ast, Context const& context)
+	      inline void on_success(Iterator const&, Iterator const& 
+		       , T& , Context const& )
+	      {
+//		       auto& position_cache = x3::get<position_cache_tag>(context).get();
+//		       position_cache.annotate(ast, first, last);
+	      }
+      };
+
+	struct expression_	;
+	struct term_      	;
+	struct factor_    	;
+	struct statement_ 	;
+	struct name_      	;
+	struct print_     	;
+	struct type_      	;
+	struct arrType    	;
+	struct varDecl_   	;
+	struct assignment_	;
+	struct comparison_	;
+	struct whileLoop_ 	;
+	struct conditional	;
+	struct codeBlock_ 	;
+	struct arrDecl_   	;
+	struct assignmentArr_	;
+	struct arrValue   	;
+	struct functionDecl	;
+	struct functionCall	; 
+	struct returnStmt 	;
+	struct pushBack 	;
+	struct arraySize 	;
+
+        x3::rule<expression_, ast::Expr> const expression("expression");
+        x3::rule<term_, ast::Expr> const term("term");
+        x3::rule<factor_, ast::Operand> const factor("factor");
+	x3::rule<statement_, ast::Statement> const statement("statement");
+	x3::rule<name_, std::string> const name("name");
+	x3::rule<print_, ast::Print> const print("print");
+	x3::rule<type_, std::string> const type("type");
+	x3::rule<arrType, std::string> const arrType("arrType");
+	x3::rule<varDecl_, ast::VarDecl> const varDecl("varDecl");
+	x3::rule<assignment_, ast::Assignment> const assignment("assignment");
+	x3::rule<comparison_, ast::Comparison> const comparison("comparison");
+	x3::rule<whileLoop_, ast::WhileLoop> const whileLoop("whileLoop");
+	x3::rule<conditional, ast::Conditional > const conditional("conditional");
+	x3::rule<codeBlock_, std::list<ast::Statement> > const codeBlock("codeBlock");
+	x3::rule<arrDecl_, ast::ArrDecl> const arrDecl("arrDecl");
+	x3::rule<assignmentArr_, ast::AssignmentArr> const assignmentArr("assignmentArr");
+	x3::rule<arrValue, ast::ArrValue> const arrValue("arrValue");
+	x3::rule<functionDecl, ast::FunctionDecl> const functionDecl("functionDecl");
+	x3::rule<functionCall, ast::FunctionCall> const functionCall("functionCall");
+	x3::rule<returnStmt, ast::Return> const returnStmt("returnStmt");
+	x3::rule<pushBack, ast::PushBack> const pushBack("pushBack");
+	x3::rule<arraySize, ast::ArraySize> const arraySize("arraySize");
+
 
 	const auto pushBack_def 
-	= name >> ".push_back(" >> expression >> ')';
+	= name >> ".push_back(" > expression > ')';
 
 	const auto arraySize_def
 	= name >> ".size()";
 
 	const auto type_def
 	= string("int")
-	| string("float")
-	| string("string")
 	;
 
 	const auto arrType_def
-	= string("array<int>");
+	= string("int[]");
 
 	const auto name_def 
-	= (x3::alpha >> *x3::alnum); 
+	= (x3::alpha >> *x3::alnum) - "print"; 
 
 	const auto returnStmt_def
 	= x3::lit("return") >> expression; 
@@ -52,36 +109,36 @@ namespace grammar
 	=  type >> name >> -('=' >> expression);
 
 	const auto arrDecl_def
-	= type >> x3::lit("[]") >> name >> -('=' >> expression);
+	= type >> x3::lit("[]") > name >> -('=' >> expression);
 	
 	const auto functionDecl_def
-	= type >> name >> '(' >> -((varDecl | arrDecl) % ',') >> ')'
-	  >>codeBlock 
+	= type >> name >> '(' > -((varDecl | arrDecl) % ',') > ')'
+	  >codeBlock 
 	  ;
 
 	const auto functionCall_def
-	= name >> '(' >> -(expression % ',') >> ')';
+	= name >> '(' >> -(expression % ',') > ')';
 
 	const auto assignment_def
-	= name >> '=' >> expression;
+	= name >> '=' > expression;
 
 	const auto arrValue_def
-	= name >> '[' >> expression > ']';
+	= name >> '[' > expression > ']';
 
 	const auto assignmentArr_def
 	= arrValue >> '=' > expression;
 
 	const auto print_def
 	=   x3::lit("print(") 
-	    >> expression
-	    >> x3::lit(")")
+	    > expression
+	    > x3::lit(")")
 	;
 
 	const auto conditional_def
 	= x3::lit("if")
-	  >>'(' >> comparison >> ')'
-	  >> codeBlock
-	  >> -(x3::lit("else") >> codeBlock)
+	  >>'(' > comparison > ')'
+	  > codeBlock
+	  >> -(x3::lit("else") > codeBlock)
 	 ;
 
         const auto expression_def 
@@ -130,15 +187,15 @@ namespace grammar
 	const auto codeBlock_def
 	= 
 	    '{'
-	    >> +statement
-	    >> '}'
+	    > +statement
+	    > '}'
 	    ;
 
 	const auto whileLoop_def
 	= 
 	    x3::lit("while") 
-	    >> '(' >> comparison >> ')'
-	    >> codeBlock
+	    > '(' > comparison > ')'
+	    > codeBlock
 	    ;
  
 	const auto statement_def 
@@ -146,16 +203,16 @@ namespace grammar
 	    functionDecl
 	    | whileLoop
 	    | conditional
-	    | (returnStmt >> ';')
-	    | (varDecl >> ';')
-	    | (arrDecl >> ';')
-	    | (assignment >> ';')
-	    | (pushBack >> ';')
-	    | (arraySize >> ';')
-	    | (print >> ';')
-	    | (functionCall >> ';')
-	    | (assignmentArr >> ';')
-	    | (expression >> ';')
+	    | (returnStmt > ';')
+	    | (varDecl > ';')
+	    | (arrDecl > ';')
+	    | (assignment > ';')
+	    | (pushBack > ';')
+	    | (arraySize > ';')
+	    | (print > ';')
+	    | (functionCall > ';')
+	    | (assignmentArr > ';')
+	    | (expression > ';')
 	    ;
 
 
@@ -188,6 +245,31 @@ namespace grammar
 	  , pushBack
 	  , arraySize
         );
+        
+        
+	struct statement_ 	: error_handler, annotate_position {};
+	struct expression_	: annotate_position {};
+	struct term_      	: annotate_position {};
+	struct factor_    	: annotate_position {};
+	struct name_      	: annotate_position {};
+	struct print_     	: annotate_position {};
+	struct type_      	: annotate_position {};
+	struct arrType    	: annotate_position {};
+	struct varDecl_   	: annotate_position {};
+	struct assignment_	: annotate_position {};
+	struct comparison_	: annotate_position {};
+	struct whileLoop_ 	: annotate_position {};
+	struct conditional	: annotate_position {};
+	struct codeBlock_ 	: annotate_position {};
+	struct arrDecl_   	: annotate_position {};
+	struct assignmentArr_	: annotate_position {};
+	struct arrValue   	: annotate_position {};
+	struct functionDecl	: annotate_position {};
+	struct functionCall	: annotate_position {}; 
+	struct returnStmt 	: annotate_position {};
+	struct pushBack 	: annotate_position {}; 
+	struct arraySize 	: annotate_position {};
+
 
 }
 

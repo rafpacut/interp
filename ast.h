@@ -3,11 +3,13 @@
 
 
 #include <list>
+#include <boost/spirit/home/x3/support/ast/position_tagged.hpp>
+#include <boost/spirit/home/x3/support/utility/error_reporting.hpp>
+#include <boost/spirit/home/x3/support/utility/annotate_on_success.hpp>
 #include <boost/spirit/home/x3/support/ast/variant.hpp>
 #include <boost/fusion/adapted.hpp>
 #include <boost/spirit/home/x3.hpp>
 #include <boost/optional.hpp>
-//#include "astAdapted.hpp"
 
 
 
@@ -41,90 +43,90 @@ using boost::variant;
 	      , x3::forward_ast<ArrValue>
 	      , x3::forward_ast<FunctionCall>
 	      , x3::forward_ast<ArraySize>
-            >
+            >, x3::position_tagged
         {
             using base_type::base_type;
             using base_type::operator=;
         };
 
-        struct Signed_
+        struct Signed_ : x3::position_tagged
         {
             char sign;
             Operand operand_;
         };
 
-        struct Operation
+        struct Operation : x3::position_tagged
         {
             char operator_;
             Operand operand_;
         };
 
-	struct Expr
+	struct Expr : x3::position_tagged
 	{
 		Operand first; 
 		std::list<Operation> rest;
 	};
 
-	struct Comparison
+	struct Comparison : x3::position_tagged
 	{
 		Expr lhs;
 		std::string op;
 		Expr rhs;
 	};
 
-	struct Assignment
+	struct Assignment : x3::position_tagged
 	{
 		std::string name;
 		Expr value;
 	};
 
-	struct ArraySize
+	struct ArraySize : x3::position_tagged
 	{
 		std::string name;
 	};
 
-	struct PushBack
+	struct PushBack : x3::position_tagged
 	{
 		std::string name;
 		Expr value;
 	};
 
-	struct ArrValue
+	struct ArrValue : x3::position_tagged
 	{
 		std::string name;
 		Expr idx;
 	};
 
-	struct AssignmentArr
+	struct AssignmentArr : x3::position_tagged
 	{
 		ArrValue id;
 		Expr value;
 	};
 
-	struct Print 
+	struct Print  : x3::position_tagged
 	{
 		Expr val;
 	};
 
-	struct VarDecl
+	struct VarDecl : x3::position_tagged
 	{
             std::string type;
             std::string name;
 	    optional<Expr> value;
 	};
 
-	struct Return
+	struct Return : x3::position_tagged
 	{
 		Expr value;
 	};
 
-	struct FunctionCall
+	struct FunctionCall : x3::position_tagged
 	{
 		std::string name;
 		paramVector params; 
 	};
 
-	struct ArrDecl
+	struct ArrDecl : x3::position_tagged
 	{
             std::string type;
             std::string name;
@@ -145,13 +147,13 @@ using boost::variant;
 		x3::forward_ast<WhileLoop>,
 		x3::forward_ast<Conditional>,
 		Expr
-	>
+	>, x3::position_tagged
 	{
 		using base_type::base_type;
 		using base_type::operator=;
         };
 
-	struct FunctionDecl
+	struct FunctionDecl : x3::position_tagged
 	{
 		std::string type;
 		std::string name;
@@ -164,14 +166,14 @@ using boost::variant;
 		}
 	};
 
-	struct Conditional
+	struct Conditional : x3::position_tagged
 	{
 		Comparison condition;
 		std::list<Statement> tBody;
 		optional<std::list<Statement>> fBody;
 	};
 
-	struct WhileLoop
+	struct WhileLoop : x3::position_tagged
 	{
 		Comparison condition;
 		std::list<Statement> body;

@@ -24,6 +24,10 @@ env: envPrinter
 
 clean:
 	rm *.o
+
+annot:
+	$(CXX) -std=c++17 -I $(ROOT_BOOST) env.cpp eval.cpp astPrinter.cpp envPrinter.cpp main.cpp -o interp.a -lstdc++fs
+
 	 
 rebuildDebug: 
 	$(CXX) $(DEBUGFLAGS) $(CXXFLAGS) env.cpp eval.cpp astPrinter.cpp envPrinter.cpp main.cpp -o dinterp.a -lstdc++fs
