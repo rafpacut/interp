@@ -9,11 +9,12 @@ namespace cmdArgProcessor
 
 	bool isCorrectFilePath(char* argv)
 	{
+		using std::filesystem::exists;
+		using std::filesystem::is_regular_file;
 		try
 		{
 			std::filesystem::path pathObj(argv);
-			return (std::filesystem::exists(pathObj) &&
-				std::filesystem::is_regular_file(pathObj));
+			return (exists(pathObj) && is_regular_file(pathObj));
 		}
 		catch(std::filesystem::filesystem_error& e)
 		{
