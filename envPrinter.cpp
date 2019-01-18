@@ -1,3 +1,6 @@
+#ifndef ENV_PRINT
+#define ENV_PRINT
+
 #include <iostream>
 #include <iterator>
 #include <boost/optional/optional_io.hpp>
@@ -10,26 +13,22 @@ namespace ast
 	{
 		void operator()(const Environment& e) 
 		{
-			pollAction();
-			if(!skipStep)
+			std::cout<<"Environment:"<<std::endl;
+
+			std::for_each(e.scopes.crbegin(), e.scopes.crend(),
+					[this](Scope const& s)
+					{
+						std::cout<<'{'<<std::endl;
+						printScope(s);
+						std::cout<<'}'<<std::endl;
+					});
+
+			if(printFun)
 			{
-				std::cout<<"Environment:"<<std::endl;
 
-				std::for_each(e.scopes.crbegin(), e.scopes.crend(),
-						[this](Scope const& s)
-						{
-							std::cout<<'{'<<std::endl;
-							printScope(s);
-							std::cout<<'}'<<std::endl;
-						});
-
-				if(printFun)
-				{
-
-					std::cout<<"functions:\n";
-					for(const auto& f: e.functions)
-						astPrint(f);
-				}
+				std::cout<<"functions:\n";
+				for(const auto& f: e.functions)
+					astPrint(f);
 			}
 		}
 
@@ -82,7 +81,7 @@ namespace ast
 	};
 }
 
-
+#endif
 
 
 

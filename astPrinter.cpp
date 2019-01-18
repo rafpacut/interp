@@ -71,7 +71,13 @@ namespace ast
 
 	void Printer::operator()(ArrDecl const& x) const
 	{
-		std::cout<<"(Array Declaration: name = '"<<x.name<<"')\n";
+		std::cout<<"(Array Declaration: name = '"<<x.name<<"'";
+		if(x.initValue)
+		{
+			std::cout<<" value =(";
+			(*this)(*(x.initValue));
+		}
+		std::cout<<")\n";
 	}
 
 	void Printer::operator()(ArrValue const& x) const
@@ -158,7 +164,7 @@ namespace ast
 
 	void Printer::operator()(FunctionCall const& x) const
 	{
-		std::cout<<"Function call\n";
+		std::cout<<"Function call ";
 		std::cout<<x.name<<'(';
 		if(x.params)
 		{

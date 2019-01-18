@@ -133,7 +133,7 @@ namespace ast{
 			}
 			catch(boost::bad_get& e)
 			{
-				std::cout<<"In array declaration: initial value is not of array type.";
+				throw std::runtime_error("In array declaration: initial value is not of array type.");
 			}
 		}
 		else
@@ -180,6 +180,7 @@ namespace ast{
 
 	basicType Eval::operator()(Expr const& x) 
 	{
+
 		basicType value = apply_visitor(*this, x.first);
 
 		for(const Operation& o: x.rest)
@@ -205,27 +206,20 @@ namespace ast{
 
 	basicType Eval::operator()(Statement const& x) 
 	{
-		//Should print AST, ask to step/continue and print Env after stmt eval
-		//Now it prints AST, prints Env before change and evals stmt.
 		if(debugOn)
-			printAST(x);
+		{
+			std::cout<<"NEXT STATEMENT\n\n"; //shouldn't be here. Not included in thesis...
+			dPrint(x);
+		}
 
 
 		basicType tmp = apply_visitor(*this, x);
 
 		if(debugOn)
-			printEnv(env);
+			dPrint(env);
 
 		return tmp;
 	}
-
-        //basicType Eval::operator()(Program const& x) 
-        //{
-        //    for (Statement const& stmt : x.stmts)
-	//	(*this)(stmt);
-
-        //    return 0;
-        //}
 
 	basicType Eval::operator()(FunctionDecl const& x)
 	{
@@ -235,18 +229,27 @@ namespace ast{
 
 	basicType Eval::operator()(Return const& x)
 	{
-		returnStatementEvald = true;
+		env.returnStatementEvald = true;
 		return (*this)(x.value);
 	}
 
 	basicType Eval::operator()(const std::list<Statement>& body)
 	{
-		returnStatementEvald = false;
+		basicType ret;
+		for(auto& stmt: body)
+			ret = (*this)(stmt);
+
+		return ret;
+	}
+
+	basicType Eval::processFBody(const std::list<Statement>& body)
+	{
+		env.returnStatementEvald = false;
 		basicType returnValue;
 		for(auto& stmt: body)
 		{
 			returnValue = (*this)(stmt);
-			if(returnStatementEvald) break;
+			if(env.returnStatementEvald) break;
 		}
 
 		return returnValue;
@@ -263,7 +266,7 @@ namespace ast{
 
 		passParameters(f, paramVals);
 
-		basicType returnValue = (*this)(f.body);
+		basicType returnValue = processFBody(f.body);
 
 		env = callStack.top();
 		callStack.pop();

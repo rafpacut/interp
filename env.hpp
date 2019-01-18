@@ -70,6 +70,8 @@ namespace ast
 
 		std::list<Scope> scopes;
 		std::set<Function> functions;
+
+		bool returnStatementEvald = false;
 	};
 
 	template<typename T>

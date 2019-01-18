@@ -1,5 +1,6 @@
 #include "env.hpp"
 #include <algorithm>
+#include <iostream>
 #include <iterator>
 
 namespace ast
@@ -15,7 +16,11 @@ namespace ast
 
 	Environment& Environment::operator=(Environment&& old)
 	{
-		this->scopes.push_back(old.scopes.front());
+		auto globalScope = old.scopes.front();
+		this->scopes.clear();
+		this->scopes.push_back(globalScope);
+		this->createScope();
+
 		this->functions = old.functions;
 
 		return *this;
@@ -41,7 +46,7 @@ namespace ast
 	{
 		//shouldn't ever throw, but...
 		if(scopes.size() == 0)
-			throw std::runtime_error("Deleting last scope");
+			throw std::runtime_error("Deleting global scope");
 		scopes.pop_back();
 	}
 
@@ -86,11 +91,11 @@ namespace ast
 		{
 			if(intVecs.find(name) != intVecs.end())
 			{
-				if(!intVecs.at(name)) throw std::runtime_error("Returning uninitialized variable "+name);
+				if(!intVecs.at(name)) throw std::runtime_error("Using uninitialized array "+name);
 				return *(intVecs.at(name));
 			} else if(ints.find(name) != ints.end())
 			{
-				if(!ints.at(name)) throw std::runtime_error("Returning uninitialized variable "+name);	
+				if(!ints.at(name)) throw std::runtime_error("Using uninitialized variable "+name);	
 				return *(ints.at(name));
 			}
 		}

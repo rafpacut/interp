@@ -8,6 +8,7 @@
 #include "ast.h"
 #include "env.hpp"
 #include "envPrinter.cpp"
+#include "debugPrinter.cpp"
 
 namespace ast{
 
@@ -44,17 +45,17 @@ namespace ast{
 		basicType operator()(std::list<Statement> const& x);
 
 
-		//basicType processFBody(std::list<Statement>);
+		basicType processFBody(const std::list<Statement>&);
 		std::vector<basicType> evalParams(paramVector params);
 		FunctionDecl getFunction(std::string fName);
 		void passParameters(FunctionDecl&, std::vector<basicType>& argValues);
 
-		bool returnStatementEvald = false;
 		bool debugOn = false;
 
 
-		envPrinter printEnv;
-		Printer printAST;
+		DebugPrinter dPrint;
+		//envPrinter printEnv;
+		//Printer printAST;
 
 		Environment env;
 		std::stack<Environment> callStack;
