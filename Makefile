@@ -4,10 +4,13 @@ CXXFLAGS = -Wall -Wextra -std=c++17 -I $(ROOT_BOOST)
 DEBUGFLAGS = -g3 -O0
 .PHONY: clean
 
-rebuild: 
+build:
+	$(CXX) -std=c++17 -I $(ROOT_BOOST) env.cpp eval.cpp astPrinter.cpp envPrinter.cpp main.cpp -o interp.a -lstdc++fs
+
+buildNoAnnot: astPrinter eval env envPrinter
 	$(CXX) $(CXXFLAGS) env.o eval.o astPrinter.o envPrinter.o main.cpp -o interp.a -lstdc++fs
 
-build: astPrinter eval env envPrinter
+rebuild: 
 	$(CXX) $(CXXFLAGS) env.o eval.o astPrinter.o envPrinter.o main.cpp -o interp.a -lstdc++fs
 
 astPrinter:
@@ -24,9 +27,6 @@ env: envPrinter
 
 clean:
 	rm *.o
-
-annot:
-	$(CXX) -std=c++17 -I $(ROOT_BOOST) env.cpp eval.cpp astPrinter.cpp envPrinter.cpp main.cpp -o interp.a -lstdc++fs
 
 	 
 rebuildDebug: 
