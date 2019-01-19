@@ -10,19 +10,49 @@ output:
 
 # 2. Fundamentals
 # 2.1 variables
+Variable declaration: 
+
+syntax: int name;
+
+Array declaration:
+
+syntax: int[] name;
 ``` c++
-int a = 5*10;
+int a;
 int[] b;
-b.push_back(7+7*7);
-b[b.size()] = 3;
-print(a);
-print(b);
 ```
-output: 
+Declaration with initialization:
 
-50 
+syntax: int name = value;
 
-56 3
+syntax: int[] b = value;
+```c++
+int a = 17;
+int[] b = foo();
+```
+Array operations:
+
+name.push_back(value) method extends array with value.
+
+name.size() method returns array size.
+
+
+name[k] retrieves the value in k-th cell of the array or used in assignment name[k] = value.
+
+```c++
+	int[] b;
+	b.push_back(1);
+	print(b[0]) 	     	 //retrieve value in 0-th cell of array b
+	b[b.size()] = b.size(); //assign value b.size() (here '1') to b.size()-th cell (here '1')
+			       //equivalent to b.push_back(1)
+	print(b)
+```
+output:
+
+1
+
+1 1
+
 
 # 2.2 IF
 if( condition ) { stmts; } 
