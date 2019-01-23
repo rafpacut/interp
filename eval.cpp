@@ -208,7 +208,7 @@ namespace ast{
 	{
 		if(debugOn)
 		{
-			std::cout<<"NEXT STATEMENT\n\n"; //shouldn't be here. Not included in thesis...
+			std::cout<<"NEXT STATEMENT\n\n"; 
 			dPrint(x);
 		}
 

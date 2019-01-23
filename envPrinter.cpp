@@ -11,7 +11,7 @@ namespace ast
 {
 	struct envPrinter
 	{
-		void operator()(const Environment& e) 
+		void operator()(const Environment& e, bool printFun) 
 		{
 			std::cout<<"Environment:"<<std::endl;
 

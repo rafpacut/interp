@@ -17,7 +17,7 @@ class DebugPrinter
 
 		void operator()(ast::Environment& env) 
 		{
-			printEnv_(env);
+			printEnv_(env, printFun);
 		}
 
 	private:

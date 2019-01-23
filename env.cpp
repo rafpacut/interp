@@ -83,7 +83,6 @@ namespace ast
 			auto vecPtr = intVecs.find(name);
 			if(!vecPtr->second)
 				throw std::runtime_error("Using uninitialized variable: "+name);
-			auto vec = *(vecPtr->second);
 
 			return vecPtr->second->at(*idx);
 		}

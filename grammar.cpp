@@ -100,7 +100,7 @@ namespace grammar
 	= string("int[]");
 
 	const auto name_def 
-	= (x3::alpha >> *x3::alnum) - "print"; 
+	= (x3::alpha >> *x3::alnum) - "print" - "while" - "if" - "int" - "int[]" - "return" - "size()" - "push_back" - "else"; 
 
 	const auto returnStmt_def
 	= x3::lit("return") >> expression; 
