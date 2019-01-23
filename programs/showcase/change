@@ -1,0 +1,53 @@
+int createCoins()
+{
+	int[] coins;
+	coins.push_back(500);
+	coins.push_back(200);
+	coins.push_back(100);
+	coins.push_back(50);
+	coins.push_back(20);
+	coins.push_back(10);
+	coins.push_back(5);
+	coins.push_back(2);
+	coins.push_back(1);
+	
+	return coins;
+}
+
+int createCoinsUsed()
+{
+
+	int[] coinsUsed;
+	coinsUsed.push_back(0);
+	coinsUsed.push_back(0);
+	coinsUsed.push_back(0);
+	coinsUsed.push_back(0);
+	coinsUsed.push_back(0);
+	coinsUsed.push_back(0);
+	coinsUsed.push_back(0);
+	coinsUsed.push_back(0);
+	coinsUsed.push_back(0);
+
+	return coinsUsed;
+}
+
+int giveChange(int amount)
+{
+	int[] coins = createCoins();
+	int[] coinsUsed = createCoinsUsed();
+
+	int coinIdx = 0;
+	while(coinIdx < coins.size())
+	{
+		while(amount >= coins[coinIdx])
+		{
+			amount = amount - coins[coinIdx];
+			coinsUsed[coinIdx] = coinsUsed[coinIdx] + 1;
+		}
+		coinIdx = coinIdx + 1;
+	}
+	return coinsUsed;
+}
+
+
+print(giveChange(423));

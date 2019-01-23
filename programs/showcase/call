@@ -1,0 +1,13 @@
+int a = 5;
+
+int bar(int a)
+{
+	return a;
+}
+
+int foo(int a)
+{
+	return bar(a);
+}
+
+print(foo(bar(a)));

@@ -1,0 +1,20 @@
+int a = 1;
+int global = 2;
+
+int bar(int a)
+{
+	print(a);
+	print(global);
+	print(fooVar);
+}
+
+int foo(int a)
+{
+	print(a);
+	print(global);
+	
+	int fooVar = 3;
+	bar(a+1);
+}
+
+foo(4);

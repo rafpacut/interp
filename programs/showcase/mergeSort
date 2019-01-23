@@ -1,0 +1,96 @@
+int[] a;
+a.push_back(6);
+a.push_back(5);
+a.push_back(4);
+a.push_back(3);
+a.push_back(2);
+a.push_back(1);
+
+
+int splice(int[] a, int start, int end)
+{
+	int[] subArray;
+	int i = start;
+	
+	while(i < end)
+	{
+		subArray.push_back(a[i]);
+		i = i+1;
+	}
+	return subArray;
+}
+
+int merge(int[] lhs, int[] rhs)
+{
+	int[] merged;
+	int i = 0;
+	int j = 0;
+	int mergedSize = lhs.size() + rhs.size();
+
+	int lhsNotPushed = 0;
+	int rhsNotPushed = 0;
+
+	while(lhsNotPushed + rhsNotPushed == 0)
+	{
+		if(lhsNotPushed == 0)
+		{
+			if(lhs[i] <= rhs[j])
+			{
+				merged.push_back(lhs[i]);
+				i = i +1;
+			}
+			if(i == lhs.size())
+			{
+				lhsNotPushed = 1;
+				i = i -1;
+			}
+		}
+		if(rhsNotPushed == 0)
+		{
+			if(rhs[j] <  lhs[i])
+			{
+				merged.push_back(rhs[j]);
+				j = j +1;
+			}
+			if(j == rhs.size())
+			{
+				rhsNotPushed = 1;
+				j = j -1;
+			}
+		}
+	}
+	if(lhsNotPushed > 0)
+	{
+		while(j < rhs.size())
+		{
+			merged.push_back(rhs[j]);
+			j = j+1;
+		}
+	}
+	if(rhsNotPushed > 0)
+	{
+		while(i < lhs.size())
+		{
+			merged.push_back(lhs[i]);
+			i = i+1;
+		}
+	}
+	return merged;
+}
+
+int sort(int[] a)
+{
+	if(a.size() == 1)
+	{
+		return a;
+	}
+	int[] head = splice(a, 0, a.size()/2);
+	int[] tail = splice(a, a.size()/2, a.size());
+	int[] headSorted = sort(head);
+	int[] tailSorted = sort(tail);
+	return merge(headSorted, tailSorted);
+}
+
+
+print(sort(a));
+
