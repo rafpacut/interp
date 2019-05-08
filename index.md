@@ -124,3 +124,5 @@ output:
 
 2 9
 
+# 2.5 See examples at
+https://github.com/rafpacut/uC/tree/master/programs/showcase
