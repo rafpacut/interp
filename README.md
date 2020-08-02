@@ -3,7 +3,7 @@
 
 A staticly typed, imperative, C-like language implementing integer type, flow control statements, dynamic arrays, functions, scope and recursion mechanisms, statement-by-statement debug mode and couple arbitrary features.
 
-Written in c++17 using boost Spirit X3 library for parsing and error reporting.
+Written in c++ using boost Spirit X3 library for parsing and error reporting.
 
 Basic documentation available [here](https://rafpacut.github.io/uC/).
 
